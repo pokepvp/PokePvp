@@ -4,6 +4,15 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>PokePvP Genesis — The first battle</title>
+    <meta name="theme-color" content="#0b0a09" />
+    <meta name="description" content="Mint Genesis Monsters on BNB Chain, bond a Squad and enter the arena." />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="PokePvP" />
+    <meta property="og:title" content="PokePvP Genesis — The first battle" />
+    <meta property="og:image" content="https://pokepvp.fun/icon-512.png" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -1142,5 +1151,6 @@
         renderPhase(); renderSupply(); renderControls(); renderColl(); renderAgent();
       })();
     </script>
+    <script>if ("serviceWorker" in navigator) addEventListener("load", function () { navigator.serviceWorker.register("/sw.js"); });</script>
   </body>
 </html>
