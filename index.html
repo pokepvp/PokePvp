@@ -382,11 +382,11 @@
             <div class="x-mstats">
               <div class="x-mstat"><span>Price</span><b id="m-price">0.0005 BNB</b><small id="m-pricenote">Free mint fee</small></div>
               <div class="x-mstat"><span>Supply</span><b>10,000</b></div>
-              <div class="x-mstat"><span>Minted</span><b id="m-minted">7,342</b></div>
+              <div class="x-mstat"><span>Minted</span><b id="m-minted">—</b></div>
               <div class="x-mstat"><span>Max per wallet</span><b id="m-maxw">10</b><small id="m-maxnote">Free mint</small></div>
             </div>
-            <div class="x-prog" role="progressbar" aria-label="Minted of supply" aria-valuemin="0" aria-valuemax="10000" aria-valuenow="7342" id="m-progbar"><i id="m-prog" style="width:73.42%"></i></div>
-            <p class="x-prog-row"><span id="m-pct">73.4% minted</span><span id="m-left">2,658 remaining</span></p>
+            <div class="x-prog" role="progressbar" aria-label="Minted of supply" aria-valuemin="0" aria-valuemax="10000" aria-valuenow="0" id="m-progbar"><i id="m-prog" style="width:0%"></i></div>
+            <p class="x-prog-row"><span id="m-pct">Loading…</span><span id="m-left"></span></p>
 
             <div class="x-mbox">
               <div class="x-seg x-seg--3" role="tablist" aria-label="Mint phase">
@@ -448,10 +448,10 @@
                   </div>
                   <div class="x-aacts">
                     <button class="x-btn x-btn--fill" type="button" id="ma-copy">Copy the prompt</button>
-                    <button class="x-btn" type="button" id="ma-sim">Simulate agent mint</button>
+                    <button class="x-btn" type="button" id="ma-sim">Mint with this wallet</button>
                   </div>
                   <p class="x-amsg" id="ma-msg" aria-live="polite"></p>
-                  <p class="x-note x-anote">Only wallets holding a .ai Agent ID can mint here. Concept preview: contract not deployed yet, so an agent sent this now will be told to stop at the first check.</p>
+                  <p class="x-note x-anote">Only wallets holding a .ai Agent ID can mint here. Contract live on BNB Chain: <span class="x-mono">0xa17d2a4e630d36163ec63b5908bd24576eeccced</span>. Function <code>agentMint(uint256 quantity)</code>, payable 0.0005 BNB each.</p>
                 </div>
               </div>
               <div id="m-panel" role="tabpanel" aria-labelledby="m-tab-free">
@@ -493,7 +493,7 @@
               </div>
               </div>
             </div>
-            <p class="x-note">Demo mint for concept preview. No real transaction, wallet or funds are used.</p>
+            <p class="x-note">Live on BNB Chain. Contract <a class="x-mono" href="https://bscscan.com/address/0xa17d2a4e630d36163ec63b5908bd24576eeccced" target="_blank" rel="noopener">0xa17d…cced</a>. Open this page in your wallet app's browser (Binance Wallet, MetaMask, OKX, Trust) to mint.</p>
 
             <div class="x-coll" id="m-coll">
               <div class="x-coll__head">
@@ -562,7 +562,7 @@
                 <p>Your Squad shares scheduled $POKE emissions according to its weight, rather than NFT mint income. Past accrual stays claimable by the previous holder; the Squad's weight moves to its new owner for future accrual.</p>
                 <p>Mining start time and emissions follow the on-chain configuration.</p>
                 <p><em>Genesis mining began on 24 October 2026.</em></p>
-                <p class="x-note">Concept contract: <span class="x-mono">0xPOKE…0000</span> (placeholder, not deployed)</p>
+                <p class="x-note">Genesis NFT contract: <a class="x-mono" href="https://bscscan.com/address/0xa17d2a4e630d36163ec63b5908bd24576eeccced" target="_blank" rel="noopener">0xa17d…cced</a> · $POKE token not deployed yet</p>
               </div>
               <div class="x-btns">
                 <a class="x-btn x-btn--fill" href="#">Find Monsters on the market</a>
@@ -759,8 +759,70 @@
         var PHASES = {
           free: { price: 5, max: 10, label: "Free mint · 0.0005 BNB fee", note: "Free mint fee", used: "Free mints used", btn: "Free Mint" },
           public: { price: 20, max: 20, label: "Public mint · 0.002 BNB", note: "Public mint", used: "Public mints used", btn: "Mint" },
-          agent: { price: 5, max: 10, label: "Agent mint", note: "Agent mint", used: "Agent mints", btn: "Simulate agent mint" }
+          agent: { price: 5, max: 10, label: "Agent mint", note: "Agent mint", used: "Agent mints", btn: "Mint with this wallet" }
         };
+        var C = "0xa17d2a4e630d36163ec63b5908bd24576eeccced", CHAIN = "0x38", RPC = "https://bsc-dataseed.bnbchain.org", E = window.ethereum;
+        var SEL = { free: "7c928fe9", public: "2db11544", agent: "a71bd8be", total: "a2309ff8", freeM: "389fcf06", pubM: "1015805b", agM: "13f91140", hasId: "4eab3ef2" };
+        var TOPIC = "0xe56ec0b2b9f75b77de932c097cc96381bb499784d1e1dd76938a9bc865f083fb";
+        var pad = function (v) { return BigInt(v).toString(16).padStart(64, "0"); };
+        var padA = function (a) { return a.slice(2).toLowerCase().padStart(64, "0"); };
+        function rpc(method, params) {
+          if (E && s.connected) return E.request({ method: method, params: params });
+          return fetch(RPC, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ jsonrpc: "2.0", id: 1, method: method, params: params }) })
+            .then(function (r) { return r.json(); }).then(function (j) { if (j.error) throw new Error(j.error.message); return j.result; });
+        }
+        function call(data) { return rpc("eth_call", [{ to: C, data: "0x" + data }, "latest"]).then(function (r) { return Number(BigInt(r)); }); }
+        function ensureChain() {
+          return E.request({ method: "eth_chainId" }).then(function (id) {
+            if (id === CHAIN) return;
+            return E.request({ method: "wallet_switchEthereumChain", params: [{ chainId: CHAIN }] }).catch(function (e) {
+              if (e && e.code === 4902) return E.request({ method: "wallet_addEthereumChain", params: [{ chainId: CHAIN, chainName: "BNB Smart Chain", nativeCurrency: { name: "BNB", symbol: "BNB", decimals: 18 }, rpcUrls: [RPC], blockExplorerUrls: ["https://bscscan.com"] }] });
+              throw e;
+            });
+          });
+        }
+        function waitTx(hash) {
+          return new Promise(function (res, rej) {
+            var n = 0;
+            (function poll() {
+              rpc("eth_getTransactionReceipt", [hash]).then(function (r) {
+                if (r) return res(r);
+                if (++n > 150) return rej(new Error("Timed out waiting for confirmation"));
+                setTimeout(poll, 2000);
+              }).catch(function () { setTimeout(poll, 2000); });
+            })();
+          });
+        }
+        function parseMints(r) {
+          return (r.logs || []).filter(function (l) { return l.address.toLowerCase() === C && l.topics[0] === TOPIC; }).map(function (l) {
+            var m = Number(BigInt("0x" + l.data.slice(2, 66)));
+            return { g: GLYPHS[m - 1], token: Number(BigInt(l.topics[2])), bonded: false };
+          });
+        }
+        function errText(e) {
+          var t = (e && (e.message || e.reason)) || String(e);
+          if (e && e.code === 4001) return "Transaction rejected in wallet.";
+          if (/insufficient funds/i.test(t)) return "Not enough BNB for price plus gas.";
+          return t.length > 140 ? t.slice(0, 140) + "…" : t;
+        }
+        function sendMint(phase, q) {
+          var wei = BigInt(PHASES[phase].price) * 100000000000000n * BigInt(q);
+          return ensureChain().then(function () {
+            return E.request({ method: "eth_sendTransaction", params: [{ from: s.acct, to: C, value: "0x" + wei.toString(16), data: "0x" + SEL[phase] + pad(q) }] });
+          });
+        }
+        function refreshChain() {
+          var jobs = [call(SEL.total).then(function (n) { s.minted = n; })];
+          if (s.acct) {
+            jobs.push(call(SEL.freeM + padA(s.acct)).then(function (n) { s.used.free = n; }));
+            jobs.push(call(SEL.pubM + padA(s.acct)).then(function (n) { s.used.public = n; }));
+            jobs.push(call(SEL.agM + padA(s.acct)).then(function (n) { s.used.agent = n; }));
+            jobs.push(rpc("eth_getBalance", [s.acct, "latest"]).then(function (b) { s.balance = Number(BigInt(b) / 100000000000000n); }));
+          }
+          return Promise.all(jobs).then(function () {
+            renderSupply(); if (!s.busy) { renderPhase(); renderControls(); } if (s.acct) walletLine();
+          }).catch(function () {});
+        }
         var TABS = ["free", "public", "agent"];
         var GLYPHS = [
           { n: "01", id: "ember", name: "Ember", r: "common" }, { n: "02", id: "tide", name: "Tide", r: "common" },
@@ -771,7 +833,7 @@
         ];
         var WEIGHT = { common: 1, rare: 2, epic: 4, legendary: 10 };
         var RLABEL = { common: "Common", rare: "Rare", epic: "Epic", legendary: "Legendary" };
-        var s = { minted: 7342, connected: false, balance: 5000, phase: "free", used: { free: 0, public: 0, agent: 0 }, qty: 1, aqty: 1, pay: "BNB", lang: "en", busy: false, owned: [], squads: 0, lastFocus: null };
+        var s = { minted: 0, connected: false, balance: 0, acct: null, phase: "free", used: { free: 0, public: 0, agent: 0 }, qty: 1, aqty: 1, pay: "BNB", lang: "en", busy: false, owned: [], squads: 0, lastFocus: null };
         var fmt = function (n) { return n.toLocaleString("en-US"); };
         var bnb = function (h) { var v = String(parseFloat((h / 10000).toFixed(4))); return (v.indexOf(".") < 0 ? v + ".00" : v) + " BNB"; };
         var P = function () { return PHASES[s.phase]; };
@@ -852,29 +914,30 @@
         }
         function msg(t, err) { var m = $("m-msg"); m.textContent = t; m.classList.toggle("is-err", !!err); }
         function walletLine() {
-          $("m-wallet").innerHTML = '<span class="x-mono">0x7a3F…9c21</span> · ' + bnb(s.balance) + " (demo)";
+          $("m-wallet").innerHTML = '<span class="x-mono">' + s.acct.slice(0, 6) + "…" + s.acct.slice(-4) + "</span> · " + bnb(s.balance);
         }
 
-        /* slow background tick */
-        (function tick() {
-          setTimeout(function () {
-            if (!s.busy && s.minted < SUPPLY) { s.minted = Math.min(SUPPLY, s.minted + 1 + Math.floor(Math.random() * 2)); renderSupply(); renderControls(); }
-            tick();
-          }, 3000 + Math.random() * 3000);
-        })();
+        /* live supply */
+        (function tick() { refreshChain(); setTimeout(tick, 15000); })();
 
         $("m-connect").addEventListener("click", function () {
           if (s.connected) return;
           var b = this;
+          if (!E) { msg("No wallet found. Open pokepvp.fun inside your wallet app's browser (Binance Wallet, MetaMask, OKX, Trust).", true); return; }
           b.disabled = true;
           b.innerHTML = '<span class="x-spin" aria-hidden="true"></span>Connecting…';
-          setTimeout(function () {
-            s.connected = true;
-            b.textContent = "Connected";
-            walletLine();
+          E.request({ method: "eth_requestAccounts" }).then(function (a) {
+            s.acct = a[0]; return ensureChain();
+          }).then(function () {
+            s.connected = true; b.textContent = "Connected";
+            return refreshChain();
+          }).then(function () {
+            walletLine(); renderPhase(); renderControls(); renderAgent();
             msg("Wallet connected. Up to " + maxQty() + " more for this wallet.");
-            renderControls();
-          }, 1000);
+          }).catch(function (e) {
+            b.disabled = false; b.textContent = "Connect wallet"; msg(errText(e), true);
+          });
+          if (E.on) E.on("accountsChanged", function (a) { s.acct = a[0] || null; if (!s.acct) { s.connected = false; } refreshChain(); });
         });
         $("m-dec").addEventListener("click", function () { if (s.qty > 1) { s.qty--; renderControls(); } });
         $("m-inc").addEventListener("click", function () { if (s.qty < maxQty()) { s.qty++; renderControls(); } });
@@ -882,26 +945,28 @@
         $("m-mint").addEventListener("click", function () {
           if (!s.connected || s.busy) return;
           var b = this, q = s.qty, ph = s.phase, price = P().price;
+          if (q > maxQty()) { msg("Wallet limit or supply reached.", true); return; }
+          if (q * price > s.balance) { msg("Not enough BNB for this mint plus gas.", true); return; }
           s.busy = true; renderControls(); msg("");
-          b.innerHTML = '<span class="x-spin" aria-hidden="true"></span>Confirming in wallet…';
-          setTimeout(function () {
+          b.innerHTML = '<span class="x-spin" aria-hidden="true"></span>Confirm in wallet…';
+          sendMint(ph, q).then(function (hash) {
             b.innerHTML = '<span class="x-spin" aria-hidden="true"></span>Minting…';
-            setTimeout(function () {
-              s.busy = false; renderPhase();
-              if (q * price > s.balance) { renderControls(); msg("Insufficient demo balance", true); return; }
-              if (q > maxQty()) { renderControls(); msg("Wallet limit or supply reached.", true); return; }
-              s.balance -= q * price; s.used[ph] += q;
-              renderPhase();
-              var got = [];
-              for (var i = 0; i < q; i++) { s.minted++; var g = roll(); got.push({ g: g, token: s.minted, bonded: false }); }
-              s.owned = s.owned.concat(got);
-              walletLine(); renderSupply(); renderControls();
+            msg("Transaction sent: " + hash.slice(0, 10) + "…");
+            return waitTx(hash);
+          }).then(function (r) {
+            s.busy = false;
+            if (r.status !== "0x1") { renderPhase(); renderControls(); msg("Mint failed on-chain. Check BscScan.", true); return; }
+            var got = parseMints(r);
+            s.owned = s.owned.concat(got);
+            return refreshChain().then(function () {
+              renderPhase(); renderControls(); renderColl();
               var left = maxQty();
-              msg("Minted " + q + (q > 1 ? " Monsters" : " Monster") + ". " + (left ? left + " more " + (ph === "free" ? "free " : "public ") + "mints allowed for this wallet." : ph === "free" ? "Free allowance reached. Switch to Public Mint to keep minting." : "Wallet limit reached."));
-              renderColl();
-              openReveal(got);
-            }, 1100);
-          }, 900);
+              msg("Minted " + got.length + (got.length > 1 ? " Monsters" : " Monster") + ". " + (left ? left + " more " + (ph === "free" ? "free " : "public ") + "mints allowed for this wallet." : ph === "free" ? "Free allowance reached. Switch to Public Mint to keep minting." : "Wallet limit reached."));
+              if (got.length) openReveal(got);
+            });
+          }).catch(function (e) {
+            s.busy = false; renderPhase(); renderControls(); msg(errText(e), true);
+          });
         });
 
         function fillArt(root) {
@@ -976,10 +1041,10 @@
         /* agent mint */
         var PROMPTS = {
           en: function (n, pay, w) {
-            return "Mint " + n + " PokePvP Genesis Monster " + (n > 1 ? "NFTs" : "NFT") + " on BNB Chain mainnet (chain ID 56) using my own Binance Agentic Wallet, paying in " + pay + ", NFTs received at the same address" + (w ? " (wallet: " + w + ")" : "") + ". PokePvP contract: 0xPOKE…0000. First verify live: the mint is open, my .ai Agent ID ownership, my remaining allowance (max 10 per Agent ID) and the exact total price (0.0005 BNB each) plus gas. Report these to me and wait for my confirmation before sending any transaction.";
+            return "Mint " + n + " PokePvP Genesis Monster " + (n > 1 ? "NFTs" : "NFT") + " on BNB Chain mainnet (chain ID 56) using my own Binance Agentic Wallet, paying in " + pay + ", NFTs received at the same address" + (w ? " (wallet: " + w + ")" : "") + ". PokePvP contract: 0xa17d2a4e630d36163ec63b5908bd24576eeccced (verify on bscscan.com). Call agentMint(uint256 quantity), payable, value = quantity × 0.0005 BNB. First verify live with eth_call: agentOpen() is true, hasAgentId(myWallet) is true, my remaining allowance (max 10 per Agent ID) and the exact total price (0.0005 BNB each) plus gas. Report these to me and wait for my confirmation before sending any transaction.";
           },
           zh: function (n, pay, w) {
-            return "请使用我自己的 Binance Agentic Wallet，在 BNB Chain 主网（链 ID 56）上铸造 " + n + " 个 PokePvP Genesis Monster NFT，使用 " + pay + " 支付，NFT 接收至同一地址" + (w ? "（钱包：" + w + "）" : "") + "。PokePvP 合约：0xPOKE…0000。请先实时核实：铸造是否开放、我的 .ai Agent ID 所有权、我的剩余额度（每个 Agent ID 最多 10 个），以及准确的总价（每个 0.0005 BNB）和 Gas 费。将以上信息报告给我，并在发送任何交易之前等待我的确认。";
+            return "请使用我自己的 Binance Agentic Wallet，在 BNB Chain 主网（链 ID 56）上铸造 " + n + " 个 PokePvP Genesis Monster NFT，使用 " + pay + " 支付，NFT 接收至同一地址" + (w ? "（钱包：" + w + "）" : "") + "。PokePvP 合约：0xa17d2a4e630d36163ec63b5908bd24576eeccced（可在 bscscan.com 核实）。调用 agentMint(uint256 quantity)，payable，value = 数量 × 0.0005 BNB。请先用 eth_call 实时核实：agentOpen() 为 true、hasAgentId(我的钱包) 为 true、我的剩余额度（每个 Agent ID 最多 10 个），以及准确的总价（每个 0.0005 BNB）和 Gas 费。将以上信息报告给我，并在发送任何交易之前等待我的确认。";
           }
         };
         function aLeft() { return Math.max(0, Math.min(10 - s.used.agent, SUPPLY - s.minted)); }
@@ -1051,27 +1116,27 @@
         $("ma-sim").addEventListener("click", function () {
           if (s.busy || aLeft() === 0) return;
           var b = this, q = s.aqty, label = b.textContent;
-          var lines = ["Agent verifying Agent ID…", "Checking allowance…", "Minting…"];
-          s.busy = true; renderAgent(); amsg("");
-          var i = 0;
-          (function next() {
-            if (i < lines.length) {
-              b.innerHTML = '<span class="x-spin" aria-hidden="true"></span>' + lines[i];
-              amsg("> " + lines[i]);
-              i++; setTimeout(next, 900);
-              return;
-            }
-            s.busy = false;
-            if (q > aLeft()) { b.textContent = label; renderAgent(); amsg("Allowance or supply reached. Agent stopped.", true); return; }
-            s.used.agent += q;
-            var got = [];
-            for (var k = 0; k < q; k++) { s.minted++; got.push({ g: roll(), token: s.minted, bonded: false }); }
-            s.owned = s.owned.concat(got);
-            b.textContent = label;
-            renderSupply(); renderControls(); renderAgent(); renderColl();
-            amsg("Agent minted " + q + (q > 1 ? " Monsters" : " Monster") + ". Agent mints: " + s.used.agent + " / 10" + (aLeft() ? "" : " · allowance reached"));
-            openReveal(got);
-          })();
+          if (!s.connected) { amsg("Connect a wallet first (Free/Public tab), or send the prompt to your agent.", true); return; }
+          s.busy = true; renderAgent(); amsg("> Checking Agent ID…");
+          b.innerHTML = '<span class="x-spin" aria-hidden="true"></span>Checking Agent ID…';
+          call(SEL.hasId + padA(s.acct)).then(function (ok) {
+            if (!ok) throw new Error("This wallet has no .ai Agent ID. Use the prompt with your Binance Agentic Wallet instead.");
+            b.innerHTML = '<span class="x-spin" aria-hidden="true"></span>Confirm in wallet…';
+            return sendMint("agent", q);
+          }).then(function (hash) {
+            b.innerHTML = '<span class="x-spin" aria-hidden="true"></span>Minting…';
+            amsg("> Sent " + hash.slice(0, 10) + "…");
+            return waitTx(hash);
+          }).then(function (r) {
+            s.busy = false; b.textContent = label;
+            if (r.status !== "0x1") { renderAgent(); amsg("Mint failed on-chain.", true); return; }
+            var got = parseMints(r); s.owned = s.owned.concat(got);
+            return refreshChain().then(function () {
+              renderAgent(); renderColl();
+              amsg("Minted " + got.length + (got.length > 1 ? " Monsters" : " Monster") + ". Agent mints: " + s.used.agent + " / 10");
+              if (got.length) openReveal(got);
+            });
+          }).catch(function (e) { s.busy = false; b.textContent = label; renderAgent(); amsg(errText(e), true); });
         });
 
         renderPhase(); renderSupply(); renderControls(); renderColl(); renderAgent();
