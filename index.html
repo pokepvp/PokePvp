@@ -1,0 +1,1081 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>PokePvP Genesis — The first battle</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=Geist+Mono:wght@400&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300&family=Inter:wght@400;500;600&display=swap"
+    />
+    <link rel="stylesheet" href="hark.css" />
+    <link rel="stylesheet" href="hark-hero.css" />
+    <style>
+      :root { color-scheme: dark; --x-bg: #0b0a09; --x-bg2: #14110d; --x-gold: #c9a86a; --x-gold2: #b8955a; --x-ink: #e9e2d3; --x-ink2: rgba(233,226,211,.75); --x-ink3: rgba(233,226,211,.62); --x-line: rgba(201,168,106,.28); --x-line2: rgba(201,168,106,.14); --x-serif: "Cormorant Garamond", Georgia, "Times New Roman", serif; --x-sans: "Inter", var(--sans), system-ui, sans-serif; }
+      body { background: radial-gradient(1200px 700px at 70% -10%, #1c1710 0%, transparent 60%), var(--x-bg); color: var(--x-ink2); font-family: var(--x-sans); }
+      .page { gap: 0; padding-block: 0 24px; max-width: 1240px; }
+      .main { gap: 0; }
+      .x-sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+      /* nav */
+      .x-nav { position: sticky; top: 0; z-index: 30; margin-inline: calc(var(--gutter) * -1); padding: 10px var(--gutter); display: flex; align-items: center; gap: 20px; background: rgba(11,10,9,.82); -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px); border-bottom: 1px solid var(--x-line2); }
+      .x-brand { display: flex; align-items: center; gap: 10px; color: var(--x-gold); text-decoration: none; font: 500 13px/1 var(--x-sans); letter-spacing: .32em; flex: none; min-height: var(--tap); min-width: var(--tap); justify-content: center; }
+      .x-links { display: flex; gap: 4px; margin: 0 auto; padding: 0; list-style: none; overflow-x: auto; scrollbar-width: none; min-width: 0; }
+      .x-links::-webkit-scrollbar { display: none; }
+      .x-links a { display: flex; align-items: center; justify-content: center; min-height: var(--tap); min-width: var(--tap); padding: 0 10px; font: 500 12px/1 var(--x-sans); letter-spacing: .16em; text-transform: uppercase; color: var(--x-ink3); text-decoration: none; white-space: nowrap; transition: color var(--dur-quick) var(--ease-out); }
+      .x-links a:hover { color: var(--x-ink); }
+      .x-links a[aria-current="page"] { color: var(--x-gold); }
+
+      /* buttons */
+      .x-btn { display: inline-flex; align-items: center; justify-content: center; gap: 10px; min-height: var(--tap); padding: 0 22px; border: 1px solid var(--x-gold); border-radius: var(--r-pill); background: transparent; color: var(--x-gold); font: 500 12px/1 var(--x-sans); letter-spacing: .18em; text-transform: uppercase; text-decoration: none; cursor: pointer; transition: box-shadow var(--dur-quick) var(--ease-out), background var(--dur-quick) var(--ease-out), color var(--dur-quick) var(--ease-out); -webkit-tap-highlight-color: transparent; }
+      .x-btn:hover { box-shadow: 0 0 24px rgba(201,168,106,.28); background: rgba(201,168,106,.08); }
+      .x-btn--fill { background: var(--x-gold); color: #14110d; }
+      .x-btn--fill:hover { background: #d6b77c; }
+      .x-btn--nav { flex: none; padding: 0 16px; }
+      .x-btns { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 32px; }
+      :focus-visible { outline-color: var(--x-gold); }
+
+      /* type */
+      .x-eyebrow { font: 500 12px/1.4 var(--x-sans); letter-spacing: .26em; text-transform: uppercase; color: var(--x-gold); margin-bottom: 18px; display: flex; align-items: center; gap: 12px; }
+      .x-eyebrow::before { content: ""; width: 28px; height: 1px; background: var(--x-gold2); }
+      .x-h1, .x-h2 { font-family: var(--x-serif); font-weight: 300; color: var(--x-ink); letter-spacing: -.01em; line-height: 1.02; }
+      .x-h1 { font-size: clamp(54px, 9vw, 112px); }
+      .x-h2 { font-size: clamp(40px, 6vw, 72px); margin-bottom: 24px; }
+      .x-h3 { font: 400 26px/1.15 var(--x-serif); color: var(--x-ink); }
+      .x-lead { font: 400 17px/1.65 var(--x-sans); color: var(--x-ink2); max-width: 34em; }
+      .x-copy p + p { margin-top: 16px; }
+      .x-copy p { font: 400 16px/1.7 var(--x-sans); color: var(--x-ink2); max-width: 36em; }
+      .x-copy em { font-family: var(--x-serif); font-style: italic; font-size: 1.2em; color: var(--x-ink); }
+      .x-note { margin-top: 20px; font: 400 12px/1.6 var(--x-sans) !important; letter-spacing: .04em; color: var(--x-ink3) !important; }
+      .x-mono { font-family: "Geist Mono", ui-monospace, monospace; color: var(--x-gold); }
+      .x-tag { display: inline-flex; align-items: center; gap: 8px; padding: 6px 14px; border: 1px solid var(--x-line); border-radius: var(--r-pill); font: 500 12px/1 var(--x-sans); letter-spacing: .18em; text-transform: uppercase; color: var(--x-gold); margin-bottom: 20px; }
+      .x-tag::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: var(--x-gold); box-shadow: 0 0 8px var(--x-gold); }
+
+      /* sections */
+      .x-sec { padding-block: clamp(72px, 11vw, 140px); border-top: 1px solid var(--x-line2); scroll-margin-top: 64px; }
+      .x-split { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: clamp(32px, 6vw, 96px); align-items: center; }
+      .x-split--swap > :first-child { order: 2; }
+      .x-media { position: relative; display: grid; place-items: center; aspect-ratio: 1; border: 1px solid var(--x-line2); border-radius: 2px; background: radial-gradient(closest-side, rgba(201,168,106,.14), transparent 75%), var(--x-bg2); overflow: hidden; margin: 0; }
+      .x-media img { width: 78%; height: 78%; object-fit: contain; }
+      .x-media::after { content: ""; position: absolute; inset: 14px; border: 1px solid var(--x-line2); pointer-events: none; }
+
+      /* hero */
+      .x-hero { min-height: calc(100svh - 64px); padding-block: 56px 72px; border-top: 0; }
+      .x-hero .x-orb { color: var(--x-gold); margin-bottom: 28px; opacity: .9; }
+      .x-hero .x-lead { margin-top: 28px; }
+      .x-hero-art { position: relative; margin: 0; display: grid; place-items: center; }
+      .x-hero-art::before { content: ""; position: absolute; inset: 4% 4% 12%; background: radial-gradient(closest-side, rgba(201,168,106,.34), rgba(201,168,106,.08) 55%, transparent 75%); filter: blur(10px); }
+      .x-hero-art img { position: relative; width: 100%; max-width: 560px; height: auto; filter: drop-shadow(0 30px 40px rgba(0,0,0,.6)); }
+      .x-hero-art figcaption { position: relative; margin-top: 16px; font: italic 300 20px/1.3 var(--x-serif); color: var(--x-ink3); text-align: center; }
+
+      /* band */
+      .x-band { position: relative; margin: 0 0 clamp(56px, 8vw, 96px); border: 1px solid var(--x-line2); overflow: hidden; aspect-ratio: 21 / 9; }
+      .x-band img { width: 100%; height: 100%; object-fit: cover; }
+      .x-band::after { content: ""; position: absolute; inset: 0; background: radial-gradient(ellipse at center, transparent 45%, rgba(11,10,9,.85) 100%), linear-gradient(to bottom, transparent 60%, rgba(11,10,9,.7)); pointer-events: none; }
+
+      /* glyph tiles */
+      /* creature art: floats on the page, soft type-colored glow only */
+      .x-t--ember { --x-glow: rgba(255,122,48,.55); } .x-t--tide { --x-glow: rgba(64,150,255,.55); }
+      .x-t--sprout { --x-glow: rgba(96,204,110,.5); } .x-t--volt { --x-glow: rgba(250,214,60,.5); }
+      .x-t--stone { --x-glow: rgba(186,150,112,.45); } .x-t--gale { --x-glow: rgba(150,224,214,.45); }
+      .x-t--frost { --x-glow: rgba(150,208,255,.5); } .x-t--shade { --x-glow: rgba(156,96,230,.55); }
+      .x-t--fang { --x-glow: rgba(242,150,60,.5); } .x-t--wyrm { --x-glow: rgba(240,196,104,.7); }
+      .x-art { position: relative; display: grid; place-items: center; width: 100%; aspect-ratio: 1; }
+      .x-art::before { content: ""; position: absolute; inset: 6%; border-radius: 50%; background: radial-gradient(closest-side, var(--x-glow, rgba(201,168,106,.4)), transparent 72%); opacity: .55; pointer-events: none; transition: opacity var(--dur-quick) var(--ease-out); }
+      .x-art img { position: relative; width: 100%; height: 100%; object-fit: contain; transition: transform .35s var(--ease-out); }
+      .x-tiles { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+      .x-tiles--ten { grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 24px 16px; margin-top: 48px; }
+      .x-tile { display: grid; justify-items: center; gap: 10px; text-align: center; }
+      .x-tile:hover .x-art img { transform: translateY(-8px); }
+      .x-tile:hover .x-art::before { opacity: .8; }
+      .x-lab { display: grid; justify-items: center; gap: 6px; }
+      .x-lab b { font: 400 12px/1 "Geist Mono", monospace; color: var(--x-gold2); }
+      .x-lab span { font: 500 12px/1 var(--x-sans); letter-spacing: .2em; text-transform: uppercase; color: var(--x-ink); }
+      .x-lab small { font: 400 12px/1 var(--x-sans); letter-spacing: .08em; color: var(--x-ink3); }
+      .x-lab small.is-legendary { color: var(--x-gold); }
+      .x-center { text-align: center; }
+      .x-center .x-eyebrow { justify-content: center; }
+      .x-center .x-eyebrow::after { content: ""; width: 28px; height: 1px; background: var(--x-gold2); }
+      .x-center .x-copy p, .x-center .x-lead { margin-inline: auto; }
+      .x-center .x-btns { justify-content: center; }
+
+      /* arena game */
+      .x-arena { position: relative; margin-top: 48px; padding: clamp(18px, 4vw, 40px); border: 1px solid var(--x-line); background: radial-gradient(800px 300px at 50% 0%, rgba(201,168,106,.08), transparent 70%), var(--x-bg2); }
+      .x-score { display: flex; justify-content: center; gap: 28px; flex-wrap: wrap; font: 500 12px/1 var(--x-sans); letter-spacing: .2em; text-transform: uppercase; color: var(--x-ink3); margin-bottom: 28px; }
+      .x-score b { color: var(--x-gold); font-weight: 500; }
+      .x-field { display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr); gap: clamp(12px, 3vw, 32px); align-items: center; }
+      .x-vs { font: italic 300 32px/1 var(--x-serif); color: var(--x-gold2); }
+      .x-fighter { padding: 20px 0; text-align: center; }
+      .x-fighter__who { font: 500 12px/1 var(--x-sans); letter-spacing: .22em; text-transform: uppercase; color: var(--x-ink3); }
+      .x-fighter__glyph { width: min(100%, 240px); margin: 10px auto 14px; color: var(--x-gold); }
+      .x-fighter__glyph svg { width: 56px; height: 56px; position: relative; }
+      .x-fighter__glyph.has-art svg { display: none; }
+      .x-fighter__type { font: 400 24px/1 var(--x-serif); color: var(--x-ink); margin-bottom: 16px; min-height: 24px; }
+      .x-hp { height: 6px; background: rgba(233,226,211,.08); border: 1px solid var(--x-line2); overflow: hidden; }
+      .x-hp i { display: block; height: 100%; width: 100%; background: linear-gradient(90deg, var(--x-gold2), var(--x-gold)); transition: width .45s var(--ease-out); }
+      .x-fighter--rival .x-hp i { background: linear-gradient(90deg, #6e5a3a, #8a7048); }
+      .x-hp-num { margin-top: 8px; font: 400 12px/1 "Geist Mono", monospace; color: var(--x-ink3); }
+      .x-log { min-height: 3.2em; margin: 28px auto 20px; max-width: 32em; text-align: center; font: italic 300 22px/1.35 var(--x-serif); color: var(--x-ink); }
+      .x-picks { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; max-width: 560px; margin: 0 auto; }
+      .x-pick { display: grid; justify-items: center; gap: 10px; padding: 16px 8px; border: 1px solid var(--x-line); background: transparent; color: var(--x-gold); font: 500 12px/1 var(--x-sans); letter-spacing: .2em; text-transform: uppercase; cursor: pointer; touch-action: manipulation; -webkit-tap-highlight-color: transparent; transition: background var(--dur-quick) var(--ease-out), box-shadow var(--dur-quick) var(--ease-out); }
+      .x-pick svg { width: 34px; height: 34px; }
+      .x-pick small { font: 400 12px/1.2 var(--x-sans); letter-spacing: .02em; text-transform: none; color: var(--x-ink3); }
+      .x-pick:hover, .x-pick:active { background: rgba(201,168,106,.08); box-shadow: 0 0 24px rgba(201,168,106,.18); }
+      .x-pick:disabled { opacity: .45; cursor: default; }
+      .x-shake { animation: x-shake .45s var(--ease-out); }
+      .x-flash .x-fighter__glyph::before { animation: x-flash .45s var(--ease-out); }
+      @keyframes x-shake { 0%,100% { transform: none; } 20% { transform: translateX(-8px); } 40% { transform: translateX(7px); } 60% { transform: translateX(-5px); } 80% { transform: translateX(3px); } }
+      @keyframes x-flash { 0%,100% { opacity: .55; transform: none; } 30% { opacity: 1; transform: scale(1.15); } }
+      .x-over { position: absolute; inset: 0; display: grid; place-items: center; align-content: center; gap: 14px; padding: 24px; text-align: center; background: rgba(11,10,9,.9); -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px); }
+      .x-over[hidden] { display: none; }
+      .x-over h3 { font: 300 clamp(48px, 8vw, 80px)/1 var(--x-serif); color: var(--x-ink); }
+      .x-over p { font: 500 13px/1.4 var(--x-sans); letter-spacing: .14em; text-transform: uppercase; color: var(--x-gold); }
+
+      /* mint */
+      .x-tag--live::before { animation: x-pulse 1.8s var(--ease-out) infinite; }
+      @keyframes x-pulse { 0% { box-shadow: 0 0 0 0 rgba(201,168,106,.7), 0 0 8px var(--x-gold); } 70% { box-shadow: 0 0 0 8px rgba(201,168,106,0), 0 0 8px var(--x-gold); } 100% { box-shadow: 0 0 0 0 rgba(201,168,106,0), 0 0 8px var(--x-gold); } }
+      .x-mstats { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; margin-top: 40px; }
+      .x-mstat { padding: 20px; border: 1px solid var(--x-line); background: linear-gradient(160deg, rgba(201,168,106,.06), transparent 60%), var(--x-bg2); }
+      .x-mstat span { display: block; font: 500 12px/1 var(--x-sans); letter-spacing: .2em; text-transform: uppercase; color: var(--x-ink3); }
+      .x-mstat b { display: block; margin-top: 14px; font: 400 clamp(26px, 3.4vw, 36px)/1 var(--x-serif); color: var(--x-ink); font-variant-numeric: tabular-nums; }
+      .x-prog { margin-top: 16px; height: 4px; background: rgba(233,226,211,.08); overflow: hidden; }
+      .x-prog i { display: block; height: 100%; background: linear-gradient(90deg, var(--x-gold2), var(--x-gold)); box-shadow: 0 0 10px rgba(201,168,106,.6); transition: width .6s var(--ease-out); }
+      .x-prog-row { display: flex; justify-content: space-between; gap: 12px; margin-top: 10px; font: 400 12px/1.4 "Geist Mono", monospace; color: var(--x-ink3); }
+      .x-mbox { margin-top: 32px; border: 1px solid var(--x-line); background: radial-gradient(800px 300px at 50% 0%, rgba(201,168,106,.08), transparent 70%), var(--x-bg2); }
+      .x-mrow { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 16px 24px; padding: clamp(18px, 3vw, 28px); border-bottom: 1px solid var(--x-line2); }
+      .x-mrow:last-child { border-bottom: 0; }
+      .x-seg { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; padding: 4px; margin: clamp(14px, 2.4vw, 20px) clamp(18px, 3vw, 28px) 0; border: 1px solid var(--x-line); border-radius: var(--r-pill); }
+      .x-seg button { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: var(--tap); padding: 0 14px; border: 0; border-radius: var(--r-pill); background: transparent; color: var(--x-ink3); font: 500 12px/1 var(--x-sans); letter-spacing: .18em; text-transform: uppercase; cursor: pointer; touch-action: manipulation; -webkit-tap-highlight-color: transparent; transition: background var(--dur-quick) var(--ease-out), color var(--dur-quick) var(--ease-out); }
+      .x-seg button:hover { color: var(--x-ink); }
+      .x-seg button[aria-selected="true"] { background: #2a2318; color: var(--x-gold); box-shadow: inset 0 0 0 1px var(--x-gold2); }
+      .x-seg button:hover:not([aria-selected="true"]) { background: #1c1810; }
+      .x-free { padding: 4px 7px; border-radius: var(--r-pill); background: var(--x-gold); color: #14110d; font: 600 12px/1 var(--x-sans); letter-spacing: .1em; }
+      .x-mstat small { display: block; margin-top: 8px; font: 400 12px/1.3 var(--x-sans); color: var(--x-ink3); }
+      .x-used { text-align: right; }
+      .x-used b { display: block; margin-top: 10px; font: 400 24px/1 var(--x-serif); color: var(--x-ink); font-variant-numeric: tabular-nums; }
+      .x-switch { flex: 1 1 100%; }
+      .x-mlabel { font: 500 12px/1 var(--x-sans); letter-spacing: .2em; text-transform: uppercase; color: var(--x-ink3); }
+      .x-mval { margin-top: 10px; font: 400 15px/1.4 var(--x-sans); color: var(--x-ink); }
+      .x-mval .x-mono { font-size: 14px; }
+      .x-step { display: inline-flex; align-items: center; border: 1px solid var(--x-line); border-radius: var(--r-pill); margin-top: 10px; }
+      .x-step button { width: var(--tap); height: var(--tap); border: 0; background: transparent; color: var(--x-gold); font: 400 22px/1 var(--x-sans); cursor: pointer; border-radius: 50%; touch-action: manipulation; -webkit-tap-highlight-color: transparent; }
+      .x-step button:hover:not(:disabled) { background: rgba(201,168,106,.08); }
+      .x-step button:disabled { opacity: .35; cursor: default; }
+      .x-step output { min-width: 44px; text-align: center; font: 400 24px/1 var(--x-serif); color: var(--x-ink); font-variant-numeric: tabular-nums; }
+      .x-total { text-align: right; }
+      .x-total b { display: block; margin-top: 10px; font: 400 32px/1 var(--x-serif); color: var(--x-gold); font-variant-numeric: tabular-nums; }
+      .x-btn[hidden] { display: none; }
+      .x-btn:disabled { opacity: .4; cursor: default; box-shadow: none; }
+      .x-btn--fill:disabled:hover { background: var(--x-gold); }
+      .x-btn--mint { flex: 1 1 100%; min-height: 52px; font-size: 13px; }
+      .x-mmsg { flex: 1 1 100%; min-height: 1.4em; text-align: center; font: 400 13px/1.4 var(--x-sans); color: var(--x-ink3); }
+      .x-mmsg.is-err { color: #e0a08a; }
+      .x-spin { width: 14px; height: 14px; border: 1.5px solid rgba(201,168,106,.3); border-top-color: currentColor; border-radius: 50%; animation: x-rot .8s linear infinite; }
+      .x-btn--fill .x-spin { border-color: rgba(20,17,13,.3); border-top-color: #14110d; }
+      @keyframes x-rot { to { transform: rotate(360deg); } }
+      .x-coll { margin-top: 32px; padding: clamp(18px, 3vw, 28px) 0; border: 1px solid transparent; border-top-color: var(--x-line2); }
+      .x-coll__head { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px 20px; }
+      .x-coll__head h3 { font: 400 26px/1.15 var(--x-serif); color: var(--x-ink); }
+      .x-coll__head h3 b { font-weight: 400; color: var(--x-gold); }
+      .x-coll__hint { margin-top: 6px; font: 400 13px/1.4 var(--x-sans); color: var(--x-ink3); }
+      .x-strip { display: flex; gap: 16px; margin-top: 20px; padding-bottom: 6px; overflow-x: auto; scrollbar-width: thin; }
+      .x-strip:empty::before { content: "Minted Monsters appear here."; font: italic 300 20px/1.3 var(--x-serif); color: var(--x-ink3); }
+      .x-cc { flex: none; width: clamp(160px, 22vw, 200px); display: grid; justify-items: center; gap: 6px; text-align: center; }
+      .x-cc:hover .x-art img { transform: translateY(-6px); }
+      .x-cc span { font: 500 12px/1 var(--x-sans); letter-spacing: .14em; text-transform: uppercase; color: var(--x-ink); }
+      .x-cc small { font: 400 12px/1 "Geist Mono", monospace; color: var(--x-ink3); }
+      .x-cc.is-bonded > span:first-of-type { color: var(--x-ink3); }
+      .x-cc--legendary .x-art::before { opacity: .85; }
+      .x-rar { display: inline-block; font: 500 12px/1.2 var(--x-sans); letter-spacing: .12em; text-transform: uppercase; color: var(--x-ink2); }
+      .x-rar--rare { color: var(--x-gold); }
+      .x-rar--epic { color: #e0c48c; }
+      .x-rar--legendary { color: #f3dca8; background: linear-gradient(110deg, #b8955a 20%, #f3dca8 45%, #c9a86a 60%, #b8955a 80%); background-size: 250% 100%; -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; animation: x-shim 2.4s linear infinite; }
+      @keyframes x-shim { from { background-position: 100% 0; } to { background-position: -150% 0; } }
+      .x-bondmsg { margin-top: 16px; font: italic 300 22px/1.3 var(--x-serif); color: var(--x-gold); }
+      .x-bondmsg:empty { display: none; }
+      .x-coll.is-glow { animation: x-glow 1.4s var(--ease-out); }
+      @keyframes x-glow { 0%,100% { box-shadow: none; border-color: var(--x-line2); } 35% { box-shadow: 0 0 0 1px var(--x-gold), 0 0 60px rgba(201,168,106,.45), inset 0 0 40px rgba(201,168,106,.15); border-color: var(--x-gold); } }
+      .x-arena-note { margin-top: 16px; font: 400 13px/1.5 var(--x-sans); color: var(--x-ink3); }
+      .x-arena-note a { display: inline-flex; align-items: center; min-height: var(--tap); color: var(--x-gold); }
+      .x-modal { position: fixed; inset: 0; z-index: 60; display: grid; place-items: center; padding: 16px; background: rgba(11,10,9,.9); -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px); }
+      .x-modal[hidden] { display: none; }
+      .x-modal__card { position: relative; width: 100%; max-width: 900px; max-height: calc(100svh - 32px); overflow: auto; padding: clamp(24px, 4vw, 44px); background: radial-gradient(700px 260px at 50% 0%, rgba(201,168,106,.1), transparent 70%); text-align: center; }
+      .x-modal__card h3 { font: 300 clamp(34px, 5vw, 52px)/1.05 var(--x-serif); color: var(--x-ink); }
+      .x-modal__close { position: absolute; top: 8px; right: 8px; width: var(--tap); height: var(--tap); border: 0; background: transparent; color: var(--x-ink3); font: 300 28px/1 var(--x-sans); cursor: pointer; }
+      .x-modal__close:hover { color: var(--x-gold); }
+      .x-reveals { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 20px; margin: 28px 0; }
+      .x-reveals--one { grid-template-columns: minmax(0, 300px); justify-content: center; }
+      .x-rc { aspect-ratio: 3 / 4; perspective: 900px; }
+      .x-rc__in { position: relative; width: 100%; height: 100%; transform-style: preserve-3d; animation: x-flip .8s var(--ease-out) forwards; }
+      @keyframes x-flip { from { transform: rotateY(0); } to { transform: rotateY(180deg); } }
+      .x-rc__f, .x-rc__b { position: absolute; inset: 0; display: grid; justify-items: center; align-content: center; gap: 8px; color: var(--x-gold); -webkit-backface-visibility: hidden; backface-visibility: hidden; }
+      .x-rc__f::before { content: ""; position: absolute; inset: 15%; border-radius: 50%; background: radial-gradient(closest-side, rgba(201,168,106,.3), transparent 72%); }
+      .x-rc__f svg { position: relative; width: 40%; height: auto; }
+      .x-rc__b { transform: rotateY(180deg); }
+      .x-rc__b .x-art::before { opacity: 0; animation: x-cglow 1.2s var(--ease-out) forwards; animation-delay: inherit; }
+      .x-rc__b .x-art { width: 76%; animation-delay: inherit; }
+      .x-rc__b b { font: 400 22px/1 var(--x-serif); color: var(--x-ink); }
+      .x-rc__b small { font: 400 12px/1 "Geist Mono", monospace; color: var(--x-ink3); }
+      @keyframes x-cglow { 0%, 45% { opacity: 0; transform: scale(.8); } 75% { opacity: 1; transform: scale(1.12); } 100% { opacity: .7; transform: none; } }
+      .x-rc--legendary .x-art::after { content: ""; position: absolute; inset: -12%; border-radius: 50%; background: radial-gradient(closest-side, rgba(243,220,168,.55), rgba(201,168,106,.22) 45%, transparent 72%); animation: x-lshim 2.4s ease-in-out infinite; pointer-events: none; z-index: 0; }
+      .x-rc--legendary .x-art img { z-index: 1; }
+      @keyframes x-lshim { 0%,100% { opacity: .55; transform: scale(.94); } 50% { opacity: 1; transform: scale(1.06); } }
+      @media (prefers-reduced-motion: reduce) {
+        .x-tag--live::before, .x-spin, .x-rar--legendary, .x-rc--legendary .x-art::after, .x-coll.is-glow { animation: none; }
+        .x-rc__in { animation: none; transform: rotateY(180deg); }
+        .x-rc__b .x-art::before { animation: none; opacity: .7; }
+        .x-art img { transition: none; }
+      }
+      @media (max-width: 760px) {
+        .x-mstats { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+        .x-mstat { padding: 16px; }
+        .x-reveals { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+        .x-reveals--one { grid-template-columns: minmax(0, 260px); }
+        .x-coll__head .x-btn { flex: 1 1 100%; }
+        .x-seg button { padding: 0 8px; letter-spacing: .1em; gap: 6px; }
+      }
+
+      /* agent mint */
+      .x-seg--3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+      .x-hero-agent { display: flex; align-items: center; gap: 10px; }
+      .x-apanel[hidden], #m-panel[hidden] { display: none; }
+      .x-aintro { flex: 1 1 26em; font: 400 15px/1.65 var(--x-sans); color: var(--x-ink2); max-width: 40em; }
+      .x-asteps { flex: 1 1 100%; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px clamp(20px, 3vw, 40px); margin: 0; padding: 0; list-style: none; }
+      .x-asteps li { display: grid; align-content: start; gap: 8px; }
+      .x-asteps b { font: 300 40px/1 var(--x-serif); color: var(--x-gold); font-variant-numeric: tabular-nums; }
+      .x-asteps h4 { font: 400 22px/1.2 var(--x-serif); color: var(--x-ink); }
+      .x-asteps p { font: 400 14px/1.6 var(--x-sans); color: var(--x-ink2); overflow-wrap: anywhere; }
+      .x-asteps code { font: 400 12px/1.6 "Geist Mono", monospace; color: var(--x-gold); }
+      .x-opts { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+      .x-opt { min-height: var(--tap); padding: 0 16px; border: 1px solid var(--x-line); border-radius: var(--r-pill); background: transparent; color: var(--x-ink3); font: 500 12px/1 var(--x-sans); letter-spacing: .14em; text-transform: uppercase; cursor: pointer; touch-action: manipulation; -webkit-tap-highlight-color: transparent; transition: background var(--dur-quick) var(--ease-out), color var(--dur-quick) var(--ease-out); }
+      .x-opt:hover { color: var(--x-ink); background: #1c1810; }
+      .x-opt[aria-pressed="true"] { background: #2a2318; color: var(--x-gold); border-color: var(--x-gold2); }
+      .x-opt--lang { text-transform: none; letter-spacing: .04em; font-size: 13px; }
+      .x-total small { display: block; margin-top: 8px; font: 400 12px/1.3 var(--x-sans); color: var(--x-ink3); }
+      .x-field2 { flex: 1 1 20em; display: grid; gap: 10px; }
+      .x-field2 label { font: 500 12px/1 var(--x-sans); letter-spacing: .2em; text-transform: uppercase; color: var(--x-ink3); }
+      .x-input { min-height: var(--tap); padding: 0 14px; border: 1px solid var(--x-line); border-radius: 2px; background: var(--x-bg); color: var(--x-ink); font: 400 14px/1 "Geist Mono", monospace; width: 100%; }
+      .x-input::placeholder { color: var(--x-ink3); }
+      .x-input:focus { outline: none; border-color: var(--x-gold); }
+      .x-prompt { flex: 1 1 100%; display: grid; gap: 10px; }
+      .x-prompt textarea { width: 100%; min-height: 190px; resize: vertical; padding: 16px 18px; border: 0; border-left: 1px solid var(--x-gold); border-radius: 0; background: #080706; color: var(--x-ink); font: 400 13px/1.7 "Geist Mono", ui-monospace, monospace; }
+      .x-prompt textarea:focus { outline: none; box-shadow: inset 0 0 0 1px var(--x-line); }
+      .x-aacts { flex: 1 1 100%; display: flex; flex-wrap: wrap; gap: 12px; }
+      .x-aacts .x-btn { flex: 1 1 14em; min-height: 52px; }
+      .x-amsg { flex: 1 1 100%; min-height: 1.4em; font: 400 13px/1.5 "Geist Mono", monospace; color: var(--x-gold); text-align: center; }
+      .x-amsg.is-err { color: #e0a08a; }
+      .x-anote { flex: 1 1 100%; margin-top: 0; }
+      .x-toast { position: fixed; left: 50%; bottom: 24px; z-index: 70; transform: translate(-50%, 12px); padding: 12px 20px; border: 1px solid var(--x-gold2); border-radius: var(--r-pill); background: #14110d; color: var(--x-gold); font: 500 12px/1 var(--x-sans); letter-spacing: .16em; text-transform: uppercase; opacity: 0; pointer-events: none; transition: opacity var(--dur-quick) var(--ease-out), transform var(--dur-quick) var(--ease-out); }
+      .x-toast.is-on { opacity: 1; transform: translate(-50%, 0); }
+      @media (max-width: 760px) {
+        .x-asteps { grid-template-columns: minmax(0, 1fr); }
+        .x-seg--3 button { padding: 0 4px; letter-spacing: .04em; gap: 4px; flex-wrap: wrap; line-height: 1.15; text-align: center; }
+        .x-seg--3 .x-free { padding: 3px 5px; }
+      }
+
+      /* footer */
+      .x-foot { margin-top: 24px; padding-top: 40px; border-top: 1px solid var(--x-gold2); display: grid; gap: 18px; text-align: center; justify-items: center; }
+      .x-foot__name { font: 300 28px/1.2 var(--x-serif); color: var(--x-ink); }
+      .x-foot__links { display: flex; flex-wrap: wrap; justify-content: center; gap: 4px 8px; padding: 0; margin: 0; list-style: none; }
+      .x-foot__links a { display: flex; align-items: center; min-height: var(--tap); padding: 0 10px; font: 500 12px/1 var(--x-sans); letter-spacing: .16em; text-transform: uppercase; color: var(--x-ink3); text-decoration: none; }
+      .x-foot__links a:hover { color: var(--x-gold); }
+      .x-foot small { font: 400 12px/1.5 var(--x-sans); color: var(--x-ink3); }
+      .x-foot .badge { margin-top: 8px; }
+
+      /* reveal */
+      .x-ready .x-reveal { opacity: 0; transform: translateY(24px); transition: opacity .9s var(--ease-out), transform .9s var(--ease-out); }
+      .x-ready .x-reveal.is-in { opacity: 1; transform: none; }
+      @media (prefers-reduced-motion: reduce) { .x-ready .x-reveal { opacity: 1; transform: none; transition: none; } .x-shake, .x-flash .x-fighter__glyph::before { animation: none; } }
+
+      @media (max-width: 900px) {
+        .x-nav { flex-wrap: wrap; gap: 0 12px; padding-block: 6px 0; }
+        .x-links { order: 3; flex-basis: 100%; margin: 0 calc(var(--gutter) * -1); padding-inline: calc(var(--gutter) - 10px); border-top: 1px solid var(--x-line2); }
+        .x-btn--nav { margin-left: auto; }
+        .x-split { grid-template-columns: minmax(0, 1fr); }
+        .x-split--swap > :first-child { order: 0; }
+        .x-hero { min-height: 0; padding-top: 40px; }
+        .x-hero .x-split > figure { order: -1; }
+        .x-hero-art img { max-width: 380px; }
+        .x-sec { scroll-margin-top: 108px; }
+      }
+      @media (max-width: 599px) {
+        .x-brand span { display: none; }
+        .x-btn--nav span { font-size: 12px; }
+        .x-tiles--ten { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+        .x-tiles { gap: 20px 10px; }
+        .x-tiles:not(.x-tiles--ten) { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+        .x-tiles:not(.x-tiles--ten) .x-tile:last-child { grid-column: 1 / -1; justify-self: center; width: calc(50% - 5px); }
+        .x-band { aspect-ratio: 4 / 3; }
+        .x-field { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+        .x-vs { display: none; }
+        .x-fighter { padding: 14px 0; }
+        .x-fighter__glyph { margin: 8px auto 12px; }
+        .x-fighter__glyph svg { width: 44px; height: 44px; }
+        .x-fighter__type { font-size: 20px; }
+        .x-log { font-size: 19px; }
+        .x-btns .x-btn { flex: 1 1 100%; }
+      }
+    </style>
+  </head>
+  <body>
+    <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+      <defs>
+        <symbol id="g-orb" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><circle cx="12" cy="12" r="10"/><path d="M2 12h6.6M15.4 12H22"/><circle cx="12" cy="12" r="3.2"/><circle cx="12" cy="12" r="1.1" fill="currentColor" stroke="none"/></symbol>
+        <symbol id="g-ember" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M24 4c2 8 12 12 12 24a12 12 0 0 1-24 0c0-6 3-9 5-12 1 4 3 6 5 6-2-6 0-13 2-18z"/><path d="M24 42a5 5 0 0 1-5-5c0-4 3-5 4-9 3 3 6 5 6 9a5 5 0 0 1-5 5z"/></symbol>
+        <symbol id="g-tide" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 30c4-10 12-16 20-14 6 1.5 7 8 2 9-4 .8-5-3-2-4"/><path d="M4 30c3 3 6 3 9 0 3 3 6 3 9 0 3 3 6 3 9 0 3 3 6 3 9 0 2 2 3 2.5 4 2.5"/><path d="M4 38c3 3 6 3 9 0 3 3 6 3 9 0 3 3 6 3 9 0 3 3 6 3 9 0 2 2 3 2.5 4 2.5"/></symbol>
+        <symbol id="g-sprout" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M24 44V22"/><path d="M24 26C24 14 32 6 42 6c0 12-8 20-18 20z"/><path d="M24 26c0-3 4-9 10-13"/><path d="M24 32c-2-8-8-12-16-12 0 8 6 13 16 12z"/><path d="M14 44h20"/></symbol>
+        <symbol id="g-volt" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M28 4 10 27h12l-4 17 20-24H26l2-16z"/></symbol>
+        <symbol id="g-stone" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M3 40 18 12l8 14 5-7 14 21z"/><path d="m14 20 4 3 3-4 3 3"/><path d="M3 40h42"/></symbol>
+        <symbol id="g-gale" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M10 42 36 10"/><path d="M36 10c4 8 0 20-12 24l-6 1c-1-10 6-22 18-25z"/><path d="m22 26 6-1M19 31l6-1M28 18l5-1"/></symbol>
+        <symbol id="g-frost" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M24 4v40M6.7 14l34.6 20M6.7 34l34.6-20"/><path d="m19 8 5 5 5-5M19 40l5-5 5 5M7 21l7-2-2-7M41 27l-7 2 2 7M7 27l7 2-2 7M41 21l-7-2 2-7"/></symbol>
+        <symbol id="g-shade" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M30 6a18 18 0 1 0 12 28A15 15 0 0 1 30 6z"/><path d="m38 10 1 3 3 1-3 1-1 3-1-3-3-1 3-1z"/></symbol>
+        <symbol id="g-fang" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M10 6c6 6 10 18 6 36"/><path d="M22 4c6 8 8 20 4 38"/><path d="M34 6c6 8 6 20 0 34"/></symbol>
+        <symbol id="g-wyrm" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M3 24c6-9 13-13 21-13s15 4 21 13c-6 9-13 13-21 13S9 33 3 24z"/><path d="M24 13c-3 4-3 18 0 22 3-4 3-18 0-22z"/><path d="M9 14 4 9M39 14l5-5"/></symbol>
+      </defs>
+    </svg>
+
+    <div class="page" id="top">
+      <header class="x-nav">
+        <a class="x-brand" href="#top" aria-label="PokePvP home"><svg width="22" height="22" aria-hidden="true"><use href="#g-orb"/></svg><span>POKEPVP</span></a>
+        <ul class="x-links">
+          <li><a href="#top">Home</a></li>
+          <li><a href="#">Proof of Trainer</a></li>
+          <li><a href="#">Launchpad</a></li>
+          <li><a href="#">Dashboard</a></li>
+          <li><a href="#top" aria-current="page">Genesis</a></li>
+          <li><a href="#mint">Mint</a></li>
+          <li><a href="#arena">Arena</a></li>
+          <li><a href="#">X</a></li>
+        </ul>
+        <a class="x-btn x-btn--nav" href="#arena"><svg width="16" height="16" aria-hidden="true"><use href="#g-orb"/></svg><span>Enter the arena</span></a>
+      </header>
+
+      <main class="main">
+        <!-- 1 Hero -->
+        <section class="x-sec x-hero" id="genesis">
+          <div class="x-split">
+            <div class="x-reveal">
+              <svg class="x-orb" width="44" height="44" aria-hidden="true"><use href="#g-orb"/></svg>
+              <p class="x-eyebrow">PokePvP Genesis</p>
+              <h1 class="x-h1">The first battle.</h1>
+              <p class="x-lead">Genesis mint is live. Mint Monsters, bond ten into a Squad and follow its $POKE mining allocation.</p>
+              <div class="x-btns"><a class="x-btn x-btn--fill" href="#mint">Mint a Monster</a><a class="x-btn" href="#arena">Open my Monsters</a></div>
+              <p class="x-note x-hero-agent"><span class="x-free">AI</span> Now mintable by AI agents via Binance Agentic Wallet.</p>
+            </div>
+            <figure class="x-hero-art x-reveal">
+              <img src="creature-cutout.png" alt="An obsidian and gold fox-dragon statue" />
+              <figcaption>Named for the battle. Built around the act of training.</figcaption>
+            </figure>
+          </div>
+        </section>
+
+        <!-- Mint -->
+        <section class="x-sec" id="mint">
+          <div class="x-reveal">
+            <p class="x-tag x-tag--live">Genesis Mint · Live</p>
+            <h2 class="x-h2">Mint a Monster.</h2>
+            <p class="x-lead">Each mint reveals one of ten Monster glyphs at random. Rarer glyphs carry more Squad weight.</p>
+          </div>
+          <div class="x-reveal">
+            <div class="x-mstats">
+              <div class="x-mstat"><span>Price</span><b id="m-price">0.0005 BNB</b><small id="m-pricenote">Free mint fee</small></div>
+              <div class="x-mstat"><span>Supply</span><b>10,000</b></div>
+              <div class="x-mstat"><span>Minted</span><b id="m-minted">7,342</b></div>
+              <div class="x-mstat"><span>Max per wallet</span><b id="m-maxw">10</b><small id="m-maxnote">Free mint</small></div>
+            </div>
+            <div class="x-prog" role="progressbar" aria-label="Minted of supply" aria-valuemin="0" aria-valuemax="10000" aria-valuenow="7342" id="m-progbar"><i id="m-prog" style="width:73.42%"></i></div>
+            <p class="x-prog-row"><span id="m-pct">73.4% minted</span><span id="m-left">2,658 remaining</span></p>
+
+            <div class="x-mbox">
+              <div class="x-seg x-seg--3" role="tablist" aria-label="Mint phase">
+                <button type="button" role="tab" id="m-tab-free" aria-selected="true" aria-controls="m-panel" data-phase="free">Free Mint <span class="x-free">FREE</span></button>
+                <button type="button" role="tab" id="m-tab-public" aria-selected="false" aria-controls="m-panel" data-phase="public" tabindex="-1">Public Mint</button>
+                <button type="button" role="tab" id="m-tab-agent" aria-selected="false" aria-controls="m-apanel" data-phase="agent" tabindex="-1">Agent Mint <span class="x-free">AI</span></button>
+              </div>
+              <div id="m-apanel" class="x-apanel" role="tabpanel" aria-labelledby="m-tab-agent" hidden>
+                <div class="x-mrow">
+                  <p class="x-aintro">No wallet popup needed. Choose how many, then send the prompt to an AI agent whose Binance Agentic Wallet holds a .ai Agent ID. It mints from its own wallet on BNB Chain at 0.0005 BNB per Monster, max 10 per Agent ID.</p>
+                  <div class="x-used">
+                    <p class="x-mlabel">Agent mints</p>
+                    <b id="ma-used">0 / 10</b>
+                  </div>
+                  <ol class="x-asteps">
+                    <li><b>01</b><h4>Get an Agent ID</h4><p>Open Binance App → Wallet → Agentic Wallet. Create your .ai Agent ID and turn on Developer Mode in settings, with a limit and expiry for this session.</p></li>
+                    <li><b>02</b><h4>Connect your AI</h4><p>Ask your AI agent to install the official skill: <code>npx skills add binance/binance-skills-hub/skills/binance-web3/binance-agentic-wallet</code> — then scan the login QR with the Binance App. Never share a seed phrase or private key.</p></li>
+                    <li><b>03</b><h4>Send the mint prompt</h4><p>Copy the prompt below and send it to your agent. It checks price and limits first, then mints.</p></li>
+                  </ol>
+                </div>
+                <div class="x-mrow">
+                  <div>
+                    <p class="x-mlabel" id="ma-qlabel">Quantity</p>
+                    <div class="x-step" role="group" aria-labelledby="ma-qlabel">
+                      <button type="button" id="ma-dec" aria-label="Decrease quantity">−</button>
+                      <output id="ma-qty" aria-live="polite">1</output>
+                      <button type="button" id="ma-inc" aria-label="Increase quantity">+</button>
+                    </div>
+                  </div>
+                  <div>
+                    <p class="x-mlabel" id="ma-paylabel">Pay with</p>
+                    <div class="x-opts" role="group" aria-labelledby="ma-paylabel">
+                      <button type="button" class="x-opt" data-pay="BNB" aria-pressed="true">BNB</button>
+                    </div>
+                  </div>
+                  <div class="x-total">
+                    <p class="x-mlabel">Total</p>
+                    <b id="ma-total">0.0005 BNB</b>
+                    <small id="ma-totalnote">1 × 0.0005 BNB · plus gas</small>
+                  </div>
+                </div>
+                <div class="x-mrow">
+                  <div class="x-field2">
+                    <label for="ma-addr">Agent wallet address (optional)</label>
+                    <input class="x-input" id="ma-addr" type="text" inputmode="text" autocomplete="off" spellcheck="false" placeholder="0x…" />
+                  </div>
+                  <div>
+                    <p class="x-mlabel" id="ma-langlabel">Prompt language</p>
+                    <div class="x-opts" role="group" aria-labelledby="ma-langlabel">
+                      <button type="button" class="x-opt x-opt--lang" data-lang="en" aria-pressed="true">English</button>
+                      <button type="button" class="x-opt x-opt--lang" data-lang="zh" aria-pressed="false" lang="zh">中文</button>
+                    </div>
+                  </div>
+                </div>
+                <div class="x-mrow">
+                  <div class="x-prompt">
+                    <label class="x-mlabel" for="ma-prompt">Mint prompt</label>
+                    <textarea id="ma-prompt" readonly spellcheck="false"></textarea>
+                  </div>
+                  <div class="x-aacts">
+                    <button class="x-btn x-btn--fill" type="button" id="ma-copy">Copy the prompt</button>
+                    <button class="x-btn" type="button" id="ma-sim">Simulate agent mint</button>
+                  </div>
+                  <p class="x-amsg" id="ma-msg" aria-live="polite"></p>
+                  <p class="x-note x-anote">Only wallets holding a .ai Agent ID can mint here. Concept preview: contract not deployed yet, so an agent sent this now will be told to stop at the first check.</p>
+                </div>
+              </div>
+              <div id="m-panel" role="tabpanel" aria-labelledby="m-tab-free">
+              <div class="x-mrow">
+                <div>
+                  <p class="x-mlabel">Phase</p>
+                  <p class="x-mval" id="m-phase">Free mint · 0.0005 BNB fee</p>
+                </div>
+                <div class="x-used">
+                  <p class="x-mlabel" id="m-usedlabel">Free mints used</p>
+                  <b id="m-used">0 / 10</b>
+                </div>
+              </div>
+              <div class="x-mrow">
+                <div>
+                  <p class="x-mlabel">Wallet</p>
+                  <p class="x-mval" id="m-wallet">Not connected</p>
+                </div>
+                <button class="x-btn" type="button" id="m-connect">Connect wallet</button>
+              </div>
+              <div class="x-mrow">
+                <div>
+                  <p class="x-mlabel" id="m-qlabel">Quantity</p>
+                  <div class="x-step" role="group" aria-labelledby="m-qlabel">
+                    <button type="button" id="m-dec" aria-label="Decrease quantity">−</button>
+                    <output id="m-qty" aria-live="polite">1</output>
+                    <button type="button" id="m-inc" aria-label="Increase quantity">+</button>
+                  </div>
+                </div>
+                <div class="x-total">
+                  <p class="x-mlabel">Total</p>
+                  <b id="m-total">0.0005 BNB</b>
+                </div>
+              </div>
+              <div class="x-mrow">
+                <button class="x-btn x-btn--fill x-btn--mint" type="button" id="m-mint" disabled>Free Mint</button>
+                <p class="x-mmsg" id="m-msg" aria-live="polite">Connect a wallet to mint. Up to 10 free mints per wallet.</p>
+                <button class="x-btn x-switch" type="button" id="m-switch" hidden>Switch to Public Mint</button>
+              </div>
+              </div>
+            </div>
+            <p class="x-note">Demo mint for concept preview. No real transaction, wallet or funds are used.</p>
+
+            <div class="x-coll" id="m-coll">
+              <div class="x-coll__head">
+                <div>
+                  <h3>Your Monsters <b id="m-count">0</b></h3>
+                  <p class="x-coll__hint" id="m-hint">0 / 10 toward your first Squad</p>
+                </div>
+                <button class="x-btn x-btn--fill" type="button" id="m-bond" hidden>Bond Squad</button>
+              </div>
+              <div class="x-strip" id="m-strip" aria-label="Monsters minted this session"></div>
+              <p class="x-bondmsg" id="m-bondmsg" aria-live="polite"></p>
+              <p class="x-arena-note">Your strongest glyph enters the arena. <a href="#arena">Go to the arena</a></p>
+            </div>
+          </div>
+        </section>
+
+        <!-- 2 Begin -->
+        <section class="x-sec" id="begin">
+          <figure class="x-band x-reveal"><img src="arena-hall.png" alt="An obsidian arena temple lit in gold" /></figure>
+          <div class="x-split">
+            <div class="x-reveal">
+              <p class="x-eyebrow">A place to begin</p>
+              <h2 class="x-h2">A Monster is the beginning.</h2>
+              <div class="x-copy"><p><em>The Squad is what you make of it.</em></p></div>
+            </div>
+            <div class="x-tiles x-reveal">
+              <div class="x-tile x-t--ember"><div class="x-art"><img src="m01-ember.png" alt="Ember, a fire fox" width="640" height="640" /></div><p class="x-lab"><b>01</b><span>Ember</span><small>Common</small></p></div>
+              <div class="x-tile x-t--tide"><div class="x-art"><img src="m02-tide.png" alt="Tide, a water turtle-serpent" width="640" height="640" /></div><p class="x-lab"><b>02</b><span>Tide</span><small>Common</small></p></div>
+              <div class="x-tile x-t--sprout"><div class="x-art"><img src="m03-sprout.png" alt="Sprout, a grass deer" width="640" height="640" /></div><p class="x-lab"><b>03</b><span>Sprout</span><small>Common</small></p></div>
+            </div>
+          </div>
+        </section>
+
+        <!-- 3 Ten become one -->
+        <section class="x-sec x-center" id="squad">
+          <div class="x-reveal">
+            <p class="x-eyebrow">The Squad</p>
+            <h2 class="x-h2">Ten become one.</h2>
+            <div class="x-copy">
+              <p>Bond any ten owned Monsters into one transferable Squad. Repeated glyph types are allowed; ten different types are not required.</p>
+              <p>The public mint is live while supply lasts. Trading, bonding and battling remain open to every wallet.</p>
+            </div>
+            <div class="x-btns"><a class="x-btn" href="#">Explore your collection</a></div>
+          </div>
+          <div class="x-tiles x-tiles--ten x-reveal" aria-label="The ten Monster glyphs">
+            <div class="x-tile x-t--ember"><div class="x-art"><img data-art="ember" src="m01-ember.png" alt="Ember, a fire fox" width="640" height="640" /></div><p class="x-lab"><b>01</b><span>Ember</span><small>Common</small></p></div>
+            <div class="x-tile x-t--tide"><div class="x-art"><img data-art="tide" src="m02-tide.png" alt="Tide, a water turtle-serpent" width="640" height="640" /></div><p class="x-lab"><b>02</b><span>Tide</span><small>Common</small></p></div>
+            <div class="x-tile x-t--sprout"><div class="x-art"><img data-art="sprout" src="m03-sprout.png" alt="Sprout, a grass deer" width="640" height="640" /></div><p class="x-lab"><b>03</b><span>Sprout</span><small>Common</small></p></div>
+            <div class="x-tile x-t--volt"><div class="x-art"><img data-art="volt" src="m04-volt.png" alt="Volt, an electric lynx" width="640" height="640" /></div><p class="x-lab"><b>04</b><span>Volt</span><small>Common</small></p></div>
+            <div class="x-tile x-t--stone"><div class="x-art"><img data-art="stone" src="m05-stone.png" alt="Stone, a rock rhino" width="640" height="640" /></div><p class="x-lab"><b>05</b><span>Stone</span><small>Rare</small></p></div>
+            <div class="x-tile x-t--gale"><div class="x-art"><img data-art="gale" src="m06-gale.png" alt="Gale, a wind falcon" width="640" height="640" /></div><p class="x-lab"><b>06</b><span>Gale</span><small>Rare</small></p></div>
+            <div class="x-tile x-t--frost"><div class="x-art"><img data-art="frost" src="m07-frost.png" alt="Frost, an ice wolf" width="640" height="640" /></div><p class="x-lab"><b>07</b><span>Frost</span><small>Rare</small></p></div>
+            <div class="x-tile x-t--shade"><div class="x-art"><img data-art="shade" src="m08-shade.png" alt="Shade, a shadow bat-cat" width="640" height="640" /></div><p class="x-lab"><b>08</b><span>Shade</span><small>Epic</small></p></div>
+            <div class="x-tile x-t--fang"><div class="x-art"><img data-art="fang" src="m09-fang.png" alt="Fang, a fighting tiger" width="640" height="640" /></div><p class="x-lab"><b>09</b><span>Fang</span><small>Epic</small></p></div>
+            <div class="x-tile x-t--wyrm"><div class="x-art"><img data-art="wyrm" src="m10-wyrm.png" alt="Wyrm, a legendary gold dragon" width="640" height="640" /></div><p class="x-lab"><b>10</b><span>Wyrm</span><small class="is-legendary">Legendary</small></p></div>
+          </div>
+        </section>
+
+        <!-- 4 Battle continues -->
+        <section class="x-sec" id="mining">
+          <div class="x-split x-split--swap">
+            <div class="x-reveal">
+              <p class="x-eyebrow">$POKE mining</p>
+              <h2 class="x-h2">Battle continues.</h2>
+              <div class="x-copy">
+                <p>Your Squad shares scheduled $POKE emissions according to its weight, rather than NFT mint income. Past accrual stays claimable by the previous holder; the Squad's weight moves to its new owner for future accrual.</p>
+                <p>Mining start time and emissions follow the on-chain configuration.</p>
+                <p><em>Genesis mining began on 24 October 2026.</em></p>
+                <p class="x-note">Concept contract: <span class="x-mono">0xPOKE…0000</span> (placeholder, not deployed)</p>
+              </div>
+              <div class="x-btns">
+                <a class="x-btn x-btn--fill" href="#">Find Monsters on the market</a>
+                <a class="x-btn" href="#">View $POKE on explorer</a>
+              </div>
+            </div>
+            <figure class="x-media x-reveal"><img src="poke-token.png" alt="The gold $POKE token" /></figure>
+          </div>
+        </section>
+
+        <!-- 5 Arena -->
+        <section class="x-sec x-center" id="arena">
+          <div class="x-reveal">
+            <p class="x-eyebrow">Arena</p>
+            <h2 class="x-h2">Enter the arena.</h2>
+            <p class="x-lead">A quick best-of-five duel. Pick a type, read your rival, win the round.</p>
+          </div>
+          <div class="x-arena x-reveal">
+            <p class="x-score"><span>Round <b id="a-round">1</b></span><span>Wins <b id="a-wins">0</b></span><span>Losses <b id="a-losses">0</b></span><span>Streak <b id="a-streak">0</b></span></p>
+            <div class="x-field">
+              <div class="x-fighter" id="a-player">
+                <p class="x-fighter__who">You</p>
+                <div class="x-fighter__glyph x-art" id="a-part"><svg aria-hidden="true"><use id="a-pglyph" href="#g-orb"/></svg></div>
+                <p class="x-fighter__type" id="a-ptype">Ready</p>
+                <div class="x-hp"><i id="a-php"></i></div>
+                <p class="x-hp-num"><span id="a-phpn">100</span> / 100 HP</p>
+              </div>
+              <span class="x-vs" aria-hidden="true">vs</span>
+              <div class="x-fighter x-fighter--rival" id="a-rival">
+                <p class="x-fighter__who">Rival</p>
+                <div class="x-fighter__glyph x-art" id="a-rart"><svg aria-hidden="true"><use id="a-rglyph" href="#g-orb"/></svg></div>
+                <p class="x-fighter__type" id="a-rtype">Waiting</p>
+                <div class="x-hp"><i id="a-rhp"></i></div>
+                <p class="x-hp-num"><span id="a-rhpn">100</span> / 100 HP</p>
+              </div>
+            </div>
+            <p class="x-log" id="a-log" aria-live="polite">Choose your type to strike first.</p>
+            <div class="x-picks">
+              <button class="x-pick" type="button" data-type="ember"><svg aria-hidden="true"><use href="#g-ember"/></svg>Ember<small>beats Sprout</small></button>
+              <button class="x-pick" type="button" data-type="tide"><svg aria-hidden="true"><use href="#g-tide"/></svg>Tide<small>beats Ember</small></button>
+              <button class="x-pick" type="button" data-type="sprout"><svg aria-hidden="true"><use href="#g-sprout"/></svg>Sprout<small>beats Tide</small></button>
+            </div>
+            <div class="x-over" id="a-over" hidden>
+              <h3 id="a-result">Victory.</h3>
+              <p id="a-reward">+0 $POKE (practice)</p>
+              <button class="x-btn x-btn--fill" type="button" id="a-again">Battle again</button>
+            </div>
+          </div>
+        </section>
+
+        <!-- 6 Founder -->
+        <section class="x-sec" id="founder">
+          <div class="x-split">
+            <figure class="x-media x-reveal"><img src="founder-chest.png" alt="An obsidian chest with gold inlay, the Founder NFT" /></figure>
+            <div class="x-reveal">
+              <p class="x-tag">In development</p>
+              <h2 class="x-h2">Forge your Founder NFT.</h2>
+              <div class="x-copy">
+                <p>After Genesis mining ends, holders are planned to be able to forge Squads into a Founder NFT by transferring them to a designated address. The number of Squads required will be announced later. Existing mining entitlements are unaffected.</p>
+                <p>Founder is intended as a long-term credential of participation in PokePvP. Possible benefits include arena access, tournament votes, and priority participation in new seasons.</p>
+                <p class="x-note">Specific benefits and rules remain to be announced, and may change or not be implemented. Founder does not promise returns, dividends or price.</p>
+              </div>
+              <div class="x-btns"><a class="x-btn" href="#">Explore Founder NFT</a></div>
+            </div>
+          </div>
+        </section>
+      </main>
+
+      <footer class="x-foot">
+        <svg width="28" height="28" style="color:var(--x-gold)" aria-hidden="true"><use href="#g-orb"/></svg>
+        <p class="x-foot__name">PokePvP · Train ideas into battles.</p>
+        <p class="x-note" style="margin:0">$POKE contract (concept) <span class="x-mono">0xPOKE…0000</span></p>
+        <ul class="x-foot__links">
+          <li><a href="#">Whitepaper</a></li>
+          <li><a href="#">Mint archive</a></li>
+          <li><a href="#">Trainer IDs</a></li>
+          <li><a href="#">PokePvP on X</a></li>
+        </ul>
+        <small>Fan concept. Not affiliated with Nintendo, Game Freak or The Pokémon Company.</small>
+        <a class="badge" href="https://hark.com/" target="_blank" rel="noopener"><span class="hark-mark"></span><span>built by hark</span></a>
+      </footer>
+    </div>
+    <div class="x-modal" id="m-modal" role="dialog" aria-modal="true" aria-labelledby="m-mtitle" hidden>
+      <div class="x-modal__card">
+        <button class="x-modal__close" type="button" id="m-close" aria-label="Close">×</button>
+        <p class="x-tag x-tag--live">Revealed</p>
+        <h3 id="m-mtitle">Your Monster.</h3>
+        <div class="x-reveals" id="m-reveals"></div>
+        <button class="x-btn x-btn--fill" type="button" id="m-done">Add to my Monsters</button>
+      </div>
+    </div>
+    <div class="x-toast" id="ma-toast" role="status" aria-live="polite"></div>
+    <script src="hark.js"></script>
+    <script>
+      (function () {
+        "use strict";
+        var d = document;
+        /* fade-up */
+        if ("IntersectionObserver" in window) {
+          d.documentElement.classList.add("x-ready");
+          var io = new IntersectionObserver(function (es) {
+            es.forEach(function (e) { if (e.isIntersecting) { e.target.classList.add("is-in"); io.unobserve(e.target); } });
+          }, { rootMargin: "0px 0px -8% 0px", threshold: 0.08 });
+          [].forEach.call(d.querySelectorAll(".x-reveal"), function (el) { io.observe(el); });
+        }
+
+        /* arena */
+        var NAMES = { ember: "Ember", tide: "Tide", sprout: "Sprout" };
+        var BEATS = { ember: "sprout", sprout: "tide", tide: "ember" };
+        var COUNTER = { sprout: "ember", tide: "sprout", ember: "tide" };
+        var TYPES = ["ember", "tide", "sprout"];
+        var $ = function (id) { return d.getElementById(id); };
+        var picks = [].slice.call(d.querySelectorAll(".x-pick"));
+        var s = { php: 100, rhp: 100, round: 1, last: null, wins: 0, losses: 0, streak: 0, busy: false };
+
+        function anim(el, cls) { el.classList.remove(cls); void el.offsetWidth; el.classList.add(cls); }
+        function setArt(el, type) {
+          var old = el.querySelector("img"); if (old) el.removeChild(old);
+          TYPES.forEach(function (t) { el.classList.remove("x-t--" + t); });
+          el.classList.toggle("has-art", !!type);
+          if (!type) return;
+          var src = d.querySelector('img[data-art="' + type + '"]');
+          if (!src) return;
+          var c = src.cloneNode(); c.removeAttribute("data-art"); c.alt = "";
+          el.classList.add("x-t--" + type); el.appendChild(c);
+        }
+        function render() {
+          $("a-php").style.width = s.php + "%"; $("a-rhp").style.width = s.rhp + "%";
+          $("a-phpn").textContent = s.php; $("a-rhpn").textContent = s.rhp;
+          $("a-round").textContent = s.round; $("a-wins").textContent = s.wins;
+          $("a-losses").textContent = s.losses; $("a-streak").textContent = s.streak;
+        }
+        function rivalPick() {
+          if (s.last && Math.random() < 0.4) return COUNTER[s.last];
+          return TYPES[Math.floor(Math.random() * 3)];
+        }
+        function play(p) {
+          if (s.busy) return;
+          var r = rivalPick(), msg;
+          setArt($("a-part"), p); setArt($("a-rart"), r);
+          $("a-ptype").textContent = NAMES[p]; $("a-rtype").textContent = NAMES[r];
+          if (BEATS[p] === r) {
+            s.rhp = Math.max(0, s.rhp - 35);
+            msg = NAMES[p] + " is super effective! Rival takes 35.";
+            anim($("a-rival"), "x-shake"); anim($("a-rival"), "x-flash");
+          } else if (p === r) {
+            s.php = Math.max(0, s.php - 15); s.rhp = Math.max(0, s.rhp - 15);
+            msg = NAMES[p] + " meets " + NAMES[r] + ". Both take 15.";
+            anim($("a-player"), "x-shake"); anim($("a-rival"), "x-shake");
+          } else {
+            s.php = Math.max(0, s.php - 35);
+            msg = NAMES[r] + " resists " + NAMES[p] + "! You take 35.";
+            anim($("a-player"), "x-shake"); anim($("a-player"), "x-flash");
+          }
+          s.last = p;
+          $("a-log").textContent = msg;
+          if (s.php === 0 || s.rhp === 0) { render(); end(); return; }
+          s.round++;
+          render();
+        }
+        function end() {
+          s.busy = true;
+          picks.forEach(function (b) { b.disabled = true; });
+          var won = s.rhp === 0 && s.php > 0, draw = s.rhp === 0 && s.php === 0;
+          if (won) { s.wins++; s.streak++; } else if (!draw) { s.losses++; s.streak = 0; }
+          var reward = won ? 50 + s.php + (s.streak - 1) * 10 : draw ? 10 : 5;
+          setTimeout(function () {
+            render();
+            $("a-result").textContent = won ? "Victory." : draw ? "Draw." : "Defeated.";
+            $("a-reward").textContent = "+" + reward + " $POKE (practice)";
+            $("a-over").hidden = false;
+            $("a-again").focus({ preventScroll: true });
+          }, 650);
+        }
+        function reset() {
+          s.php = 100; s.rhp = 100; s.round = 1; s.last = null; s.busy = false;
+          setArt($("a-part"), null); setArt($("a-rart"), null);
+          $("a-ptype").textContent = "Ready"; $("a-rtype").textContent = "Waiting";
+          $("a-log").textContent = "A new rival steps in. Choose your type.";
+          $("a-over").hidden = true;
+          picks.forEach(function (b) { b.disabled = false; });
+          render();
+        }
+        picks.forEach(function (b) { b.addEventListener("click", function () { play(b.getAttribute("data-type")); }); });
+        $("a-again").addEventListener("click", reset);
+        render();
+      })();
+    </script>
+    <script>
+      (function () {
+        "use strict";
+        var d = document, $ = function (id) { return d.getElementById(id); };
+        var SUPPLY = 10000; /* prices in ten-thousandths of BNB */
+        var PHASES = {
+          free: { price: 5, max: 10, label: "Free mint · 0.0005 BNB fee", note: "Free mint fee", used: "Free mints used", btn: "Free Mint" },
+          public: { price: 20, max: 20, label: "Public mint · 0.002 BNB", note: "Public mint", used: "Public mints used", btn: "Mint" },
+          agent: { price: 5, max: 10, label: "Agent mint", note: "Agent mint", used: "Agent mints", btn: "Simulate agent mint" }
+        };
+        var TABS = ["free", "public", "agent"];
+        var GLYPHS = [
+          { n: "01", id: "ember", name: "Ember", r: "common" }, { n: "02", id: "tide", name: "Tide", r: "common" },
+          { n: "03", id: "sprout", name: "Sprout", r: "common" }, { n: "04", id: "volt", name: "Volt", r: "common" },
+          { n: "05", id: "stone", name: "Stone", r: "rare" }, { n: "06", id: "gale", name: "Gale", r: "rare" },
+          { n: "07", id: "frost", name: "Frost", r: "rare" }, { n: "08", id: "shade", name: "Shade", r: "epic" },
+          { n: "09", id: "fang", name: "Fang", r: "epic" }, { n: "10", id: "wyrm", name: "Wyrm", r: "legendary" }
+        ];
+        var WEIGHT = { common: 1, rare: 2, epic: 4, legendary: 10 };
+        var RLABEL = { common: "Common", rare: "Rare", epic: "Epic", legendary: "Legendary" };
+        var s = { minted: 7342, connected: false, balance: 5000, phase: "free", used: { free: 0, public: 0, agent: 0 }, qty: 1, aqty: 1, pay: "BNB", lang: "en", busy: false, owned: [], squads: 0, lastFocus: null };
+        var fmt = function (n) { return n.toLocaleString("en-US"); };
+        var bnb = function (h) { var v = String(parseFloat((h / 10000).toFixed(4))); return (v.indexOf(".") < 0 ? v + ".00" : v) + " BNB"; };
+        var P = function () { return PHASES[s.phase]; };
+
+        function roll() {
+          var x = Math.random(), pool;
+          if (x < 0.60) pool = GLYPHS.slice(0, 4);
+          else if (x < 0.88) pool = GLYPHS.slice(4, 7);
+          else if (x < 0.98) pool = GLYPHS.slice(7, 9);
+          else pool = GLYPHS.slice(9);
+          return pool[Math.floor(Math.random() * pool.length)];
+        }
+        function maxQty() { return Math.max(0, Math.min(P().max - s.used[s.phase], SUPPLY - s.minted)); }
+        function capped() { return s.phase === "free" && s.used.free >= P().max; }
+        function renderPhase() {
+          var p = P(), ag = s.phase === "agent";
+          TABS.forEach(function (k) {
+            var t = $("m-tab-" + k), on = k === s.phase;
+            t.setAttribute("aria-selected", on); t.tabIndex = on ? 0 : -1;
+          });
+          $("m-panel").hidden = ag; $("m-apanel").hidden = !ag;
+          if (ag) {
+            $("m-price").textContent = "0.0005 BNB";
+            $("m-pricenote").textContent = "per Monster";
+            $("m-maxw").textContent = "10 per Agent ID";
+            $("m-maxnote").textContent = "Agent mint";
+            renderAgent();
+            return;
+          }
+          $("m-price").textContent = bnb(p.price);
+          $("m-pricenote").textContent = p.note;
+          $("m-maxw").textContent = p.max;
+          $("m-maxnote").textContent = p.note.replace(" fee", "");
+          $("m-phase").textContent = p.label;
+          $("m-usedlabel").textContent = p.used;
+          $("m-used").textContent = s.used[s.phase] + " / " + p.max;
+          $("m-panel").setAttribute("aria-labelledby", "m-tab-" + s.phase);
+          if (!s.busy) $("m-mint").textContent = capped() ? "Free allowance reached" : p.btn;
+          $("m-switch").hidden = !capped();
+        }
+        function setPhase(k) {
+          if (s.busy) return;
+          if (k !== s.phase) { s.phase = k; s.qty = 1; }
+          renderPhase(); renderControls();
+          if (k === "agent") return;
+          var left = maxQty(), name = k === "free" ? "Free Mint" : "Public Mint";
+          if (capped()) msg("Free allowance reached. Switch to Public Mint to keep minting.");
+          else if (!s.connected) msg(name + " selected. Connect a wallet to mint up to " + P().max + " per wallet.");
+          else msg(name + " selected. " + (left ? left + " more " + (k === "free" ? "free " : "public ") + "mints allowed for this wallet." : "Wallet limit reached."));
+        }
+        TABS.forEach(function (k, i) {
+          $("m-tab-" + k).addEventListener("click", function () { setPhase(k); });
+          $("m-tab-" + k).addEventListener("keydown", function (e) {
+            if (e.key === "ArrowLeft" || e.key === "ArrowRight") {
+              e.preventDefault();
+              var o = TABS[(i + (e.key === "ArrowRight" ? 1 : TABS.length - 1)) % TABS.length];
+              setPhase(o); $("m-tab-" + o).focus();
+            }
+          });
+        });
+        $("m-switch").addEventListener("click", function () { setPhase("public"); $("m-tab-public").focus(); });
+        function renderSupply() {
+          var pct = (s.minted / SUPPLY) * 100;
+          $("m-minted").textContent = fmt(s.minted);
+          $("m-prog").style.width = pct + "%";
+          $("m-progbar").setAttribute("aria-valuenow", s.minted);
+          $("m-pct").textContent = pct.toFixed(1) + "% minted";
+          $("m-left").textContent = fmt(SUPPLY - s.minted) + " remaining";
+        }
+        function renderControls() {
+          var max = maxQty();
+          if (s.qty > max) s.qty = Math.max(1, max);
+          $("m-qty").textContent = s.qty;
+          $("m-total").textContent = bnb(s.qty * P().price);
+          $("m-dec").disabled = s.busy || s.qty <= 1;
+          $("m-inc").disabled = s.busy || s.qty >= max;
+          $("m-mint").disabled = !s.connected || s.busy || max === 0;
+        }
+        function msg(t, err) { var m = $("m-msg"); m.textContent = t; m.classList.toggle("is-err", !!err); }
+        function walletLine() {
+          $("m-wallet").innerHTML = '<span class="x-mono">0x7a3F…9c21</span> · ' + bnb(s.balance) + " (demo)";
+        }
+
+        /* slow background tick */
+        (function tick() {
+          setTimeout(function () {
+            if (!s.busy && s.minted < SUPPLY) { s.minted = Math.min(SUPPLY, s.minted + 1 + Math.floor(Math.random() * 2)); renderSupply(); renderControls(); }
+            tick();
+          }, 3000 + Math.random() * 3000);
+        })();
+
+        $("m-connect").addEventListener("click", function () {
+          if (s.connected) return;
+          var b = this;
+          b.disabled = true;
+          b.innerHTML = '<span class="x-spin" aria-hidden="true"></span>Connecting…';
+          setTimeout(function () {
+            s.connected = true;
+            b.textContent = "Connected";
+            walletLine();
+            msg("Wallet connected. Up to " + maxQty() + " more for this wallet.");
+            renderControls();
+          }, 1000);
+        });
+        $("m-dec").addEventListener("click", function () { if (s.qty > 1) { s.qty--; renderControls(); } });
+        $("m-inc").addEventListener("click", function () { if (s.qty < maxQty()) { s.qty++; renderControls(); } });
+
+        $("m-mint").addEventListener("click", function () {
+          if (!s.connected || s.busy) return;
+          var b = this, q = s.qty, ph = s.phase, price = P().price;
+          s.busy = true; renderControls(); msg("");
+          b.innerHTML = '<span class="x-spin" aria-hidden="true"></span>Confirming in wallet…';
+          setTimeout(function () {
+            b.innerHTML = '<span class="x-spin" aria-hidden="true"></span>Minting…';
+            setTimeout(function () {
+              s.busy = false; renderPhase();
+              if (q * price > s.balance) { renderControls(); msg("Insufficient demo balance", true); return; }
+              if (q > maxQty()) { renderControls(); msg("Wallet limit or supply reached.", true); return; }
+              s.balance -= q * price; s.used[ph] += q;
+              renderPhase();
+              var got = [];
+              for (var i = 0; i < q; i++) { s.minted++; var g = roll(); got.push({ g: g, token: s.minted, bonded: false }); }
+              s.owned = s.owned.concat(got);
+              walletLine(); renderSupply(); renderControls();
+              var left = maxQty();
+              msg("Minted " + q + (q > 1 ? " Monsters" : " Monster") + ". " + (left ? left + " more " + (ph === "free" ? "free " : "public ") + "mints allowed for this wallet." : ph === "free" ? "Free allowance reached. Switch to Public Mint to keep minting." : "Wallet limit reached."));
+              renderColl();
+              openReveal(got);
+            }, 1100);
+          }, 900);
+        });
+
+        function fillArt(root) {
+          [].forEach.call(root.querySelectorAll("[data-fill]"), function (el) {
+            var src = d.querySelector('img[data-art="' + el.getAttribute("data-fill") + '"]');
+            if (!src) return;
+            var c = src.cloneNode(); c.removeAttribute("data-art"); c.alt = "";
+            el.removeAttribute("data-fill"); el.appendChild(c);
+          });
+        }
+        function cardHTML(m, i) {
+          var g = m.g;
+          return '<div class="x-rc x-rc--' + g.r + '"><div class="x-rc__in" style="animation-delay:' + (0.15 + i * 0.12) + 's">' +
+            '<div class="x-rc__f"><svg aria-hidden="true"><use href="#g-orb"/></svg></div>' +
+            '<div class="x-rc__b" style="animation-delay:' + (0.15 + i * 0.12) + 's"><div class="x-art x-t--' + g.id + '" data-fill="' + g.id + '"></div>' +
+            '<b>' + g.name + '</b><small>#' + m.token + ' · ' + g.n + '</small><span class="x-rar x-rar--' + g.r + '">' + RLABEL[g.r] + '</span></div></div></div>';
+        }
+        function openReveal(got) {
+          var box = $("m-reveals");
+          box.className = "x-reveals" + (got.length === 1 ? " x-reveals--one" : "");
+          box.innerHTML = got.map(cardHTML).join("");
+          fillArt(box);
+          var leg = got.some(function (m) { return m.g.r === "legendary"; });
+          $("m-mtitle").textContent = got.length === 1 ? (leg ? "A Legendary Wyrm." : "Your Monster.") : "Your " + got.length + " Monsters." + (leg ? " A Legendary among them." : "");
+          s.lastFocus = d.activeElement;
+          $("m-modal").hidden = false;
+          d.body.style.overflow = "hidden";
+          $("m-close").focus({ preventScroll: true });
+        }
+        function closeReveal() {
+          if ($("m-modal").hidden) return;
+          $("m-modal").hidden = true;
+          d.body.style.overflow = "";
+          if (s.lastFocus && s.lastFocus.focus) s.lastFocus.focus({ preventScroll: true });
+        }
+        $("m-close").addEventListener("click", closeReveal);
+        $("m-done").addEventListener("click", function () { closeReveal(); $("m-coll").scrollIntoView({ behavior: "smooth", block: "nearest" }); });
+        $("m-modal").addEventListener("click", function (e) { if (e.target === this) closeReveal(); });
+        d.addEventListener("keydown", function (e) {
+          if ($("m-modal").hidden) return;
+          if (e.key === "Escape") closeReveal();
+          if (e.key === "Tab") {
+            var f = [$("m-close"), $("m-done")];
+            if (e.shiftKey && d.activeElement === f[0]) { e.preventDefault(); f[1].focus(); }
+            else if (!e.shiftKey && d.activeElement === f[1]) { e.preventDefault(); f[0].focus(); }
+          }
+        });
+
+        function free() { return s.owned.filter(function (m) { return !m.bonded; }); }
+        function renderColl() {
+          $("m-count").textContent = s.owned.length;
+          $("m-strip").innerHTML = s.owned.slice().reverse().map(function (m) {
+            return '<div class="x-cc x-cc--' + m.g.r + (m.bonded ? " is-bonded" : "") + '"><div class="x-art x-t--' + m.g.id + '" data-fill="' + m.g.id + '"></div><span>' + m.g.name + '</span><small>#' + m.token + '</small><span class="x-rar x-rar--' + m.g.r + '">' + (m.bonded ? "Bonded" : RLABEL[m.g.r]) + '</span></div>';
+          }).join("");
+          fillArt($("m-strip"));
+          var n = free().length;
+          $("m-hint").textContent = Math.min(n, 10) + " / 10 toward your " + (s.squads ? "next" : "first") + " Squad";
+          $("m-bond").hidden = n < 10;
+        }
+        $("m-bond").addEventListener("click", function () {
+          var f = free();
+          if (f.length < 10) return;
+          var w = 0;
+          f.slice(0, 10).forEach(function (m) { m.bonded = true; w += WEIGHT[m.g.r]; });
+          s.squads++;
+          var c = $("m-coll");
+          c.classList.remove("is-glow"); void c.offsetWidth; c.classList.add("is-glow");
+          $("m-bondmsg").textContent = "Squad #" + s.squads + " bonded. Weight: " + w;
+          renderColl();
+        });
+
+        /* agent mint */
+        var PROMPTS = {
+          en: function (n, pay, w) {
+            return "Mint " + n + " PokePvP Genesis Monster " + (n > 1 ? "NFTs" : "NFT") + " on BNB Chain mainnet (chain ID 56) using my own Binance Agentic Wallet, paying in " + pay + ", NFTs received at the same address" + (w ? " (wallet: " + w + ")" : "") + ". PokePvP contract: 0xPOKE…0000. First verify live: the mint is open, my .ai Agent ID ownership, my remaining allowance (max 10 per Agent ID) and the exact total price (0.0005 BNB each) plus gas. Report these to me and wait for my confirmation before sending any transaction.";
+          },
+          zh: function (n, pay, w) {
+            return "请使用我自己的 Binance Agentic Wallet，在 BNB Chain 主网（链 ID 56）上铸造 " + n + " 个 PokePvP Genesis Monster NFT，使用 " + pay + " 支付，NFT 接收至同一地址" + (w ? "（钱包：" + w + "）" : "") + "。PokePvP 合约：0xPOKE…0000。请先实时核实：铸造是否开放、我的 .ai Agent ID 所有权、我的剩余额度（每个 Agent ID 最多 10 个），以及准确的总价（每个 0.0005 BNB）和 Gas 费。将以上信息报告给我，并在发送任何交易之前等待我的确认。";
+          }
+        };
+        function aLeft() { return Math.max(0, Math.min(10 - s.used.agent, SUPPLY - s.minted)); }
+        function renderAgent() {
+          var left = aLeft();
+          if (s.aqty > left) s.aqty = Math.max(1, left);
+          var q = s.aqty;
+          $("ma-qty").textContent = q;
+          $("ma-used").textContent = "Agent mints: " + s.used.agent + " / 10";
+          $("ma-dec").disabled = s.busy || q <= 1;
+          $("ma-inc").disabled = s.busy || q >= left;
+          $("ma-sim").disabled = s.busy || left === 0;
+          $("ma-total").textContent = bnb(q * 5);
+          $("ma-totalnote").textContent = q + " × 0.0005 BNB · plus gas";
+          [].forEach.call(d.querySelectorAll("[data-pay]"), function (b) { b.setAttribute("aria-pressed", b.getAttribute("data-pay") === s.pay); });
+          [].forEach.call(d.querySelectorAll("[data-lang]"), function (b) { b.setAttribute("aria-pressed", b.getAttribute("data-lang") === s.lang); });
+          var w = $("ma-addr").value.trim();
+          var ta = $("ma-prompt");
+          ta.value = PROMPTS[s.lang](q, s.pay, w);
+          ta.setAttribute("lang", s.lang);
+        }
+        function amsg(t, err) { var m = $("ma-msg"); m.textContent = t; m.classList.toggle("is-err", !!err); }
+        $("ma-dec").addEventListener("click", function () { if (s.aqty > 1) { s.aqty--; renderAgent(); } });
+        $("ma-inc").addEventListener("click", function () { if (s.aqty < aLeft()) { s.aqty++; renderAgent(); } });
+        [].forEach.call(d.querySelectorAll("[data-pay]"), function (b) { b.addEventListener("click", function () { s.pay = b.getAttribute("data-pay"); renderAgent(); }); });
+        [].forEach.call(d.querySelectorAll("[data-lang]"), function (b) { b.addEventListener("click", function () { s.lang = b.getAttribute("data-lang"); renderAgent(); }); });
+        $("ma-addr").addEventListener("input", renderAgent);
+
+        var toastT;
+        function toast(t) {
+          var el = $("ma-toast");
+          el.textContent = t; el.classList.add("is-on");
+          clearTimeout(toastT); toastT = setTimeout(function () { el.classList.remove("is-on"); }, 2200);
+        }
+        function copyFallback() {
+          var ta = $("ma-prompt"), ok = false;
+          ta.focus(); ta.select();
+          try { ta.setSelectionRange(0, ta.value.length); } catch (e) {}
+          try { ok = d.execCommand("copy"); } catch (e) { ok = false; }
+          toast(ok ? "Copied" : "Select and copy manually");
+        }
+        var copyT;
+        function copied(ok) {
+          var b = $("ma-copy");
+          b.textContent = ok ? "Copied" : "Select and copy manually";
+          amsg(ok ? "Prompt copied. Send it to your agent." : "Prompt selected. Copy it manually.", !ok);
+          clearTimeout(copyT); copyT = setTimeout(function () { b.textContent = "Copy the prompt"; }, 2200);
+        }
+        $("ma-copy").addEventListener("click", function () {
+          var text = $("ma-prompt").value, done = false;
+          var ta = $("ma-prompt"); ta.select();
+          amsg("Copying prompt…");
+          function finish(ok) { if (done) return; done = true; if (!ok) { copyFallbackSync(); return; } toast("Copied"); copied(true); }
+          function copyFallbackSync() {
+            var ok = false;
+            ta.focus(); ta.select();
+            try { ta.setSelectionRange(0, ta.value.length); } catch (e) {}
+            try { ok = d.execCommand("copy"); } catch (e) { ok = false; }
+            toast(ok ? "Copied" : "Select and copy manually"); copied(ok);
+          }
+          if (navigator.clipboard && navigator.clipboard.writeText) {
+            try {
+              navigator.clipboard.writeText(text).then(function () { finish(true); }, function () { finish(false); });
+            } catch (e) { finish(false); }
+            setTimeout(function () { finish(false); }, 800);
+          } else { done = true; copyFallbackSync(); }
+        });
+
+        $("ma-sim").addEventListener("click", function () {
+          if (s.busy || aLeft() === 0) return;
+          var b = this, q = s.aqty, label = b.textContent;
+          var lines = ["Agent verifying Agent ID…", "Checking allowance…", "Minting…"];
+          s.busy = true; renderAgent(); amsg("");
+          var i = 0;
+          (function next() {
+            if (i < lines.length) {
+              b.innerHTML = '<span class="x-spin" aria-hidden="true"></span>' + lines[i];
+              amsg("> " + lines[i]);
+              i++; setTimeout(next, 900);
+              return;
+            }
+            s.busy = false;
+            if (q > aLeft()) { b.textContent = label; renderAgent(); amsg("Allowance or supply reached. Agent stopped.", true); return; }
+            s.used.agent += q;
+            var got = [];
+            for (var k = 0; k < q; k++) { s.minted++; got.push({ g: roll(), token: s.minted, bonded: false }); }
+            s.owned = s.owned.concat(got);
+            b.textContent = label;
+            renderSupply(); renderControls(); renderAgent(); renderColl();
+            amsg("Agent minted " + q + (q > 1 ? " Monsters" : " Monster") + ". Agent mints: " + s.used.agent + " / 10" + (aLeft() ? "" : " · allowance reached"));
+            openReveal(got);
+          })();
+        });
+
+        renderPhase(); renderSupply(); renderControls(); renderColl(); renderAgent();
+      })();
+    </script>
+  </body>
+</html>
