@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="id"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>PokePvP Genesis · Withdraw</title><meta name="robots" content="noindex">
+<style>
+body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;background:#0d0b14;color:#f3eede;display:flex;justify-content:center;padding:24px}
+.c{max-width:440px;width:100%}h1{font-size:22px;margin:0 0 6px;color:#f2c14e}.s{color:#a9a3b8;font-size:14px;line-height:1.5;margin:0 0 20px}
+.box{background:#18141f;border:1px solid #2c2638;border-radius:14px;padding:16px;margin-bottom:14px}
+.k{color:#a9a3b8;font-size:12px;text-transform:uppercase;letter-spacing:.06em}.v{font-size:26px;font-weight:700;margin-top:4px}
+button{width:100%;padding:14px;border:0;border-radius:12px;font-size:16px;font-weight:700;cursor:pointer;margin-top:10px;background:#f2c14e;color:#1a1408}
+button:disabled{opacity:.4;cursor:not-allowed}button.alt{background:#2c2638;color:#f3eede}
+input{width:100%;box-sizing:border-box;padding:12px;border-radius:10px;border:1px solid #2c2638;background:#0d0b14;color:#f3eede;font-family:monospace;font-size:13px;margin-top:6px}
+.log{font-size:13px;white-space:pre-wrap;word-break:break-all;margin-top:10px;color:#a9a3b8}.ok{color:#7ee2a8}.bad{color:#ff7a7a}a{color:#f2c14e}
+</style></head><body><div class="c">
+<h1>Withdraw hasil mint</h1>
+<p class="s">Hanya wallet owner kontrak yang bisa menarik saldo. Buka halaman ini di browser dApp wallet owner (Binance Wallet, MetaMask, OKX, Trust).</p>
+<div class="box"><div class="k">Saldo kontrak</div><div class="v" id="bal">…</div><div class="log" id="minted"></div></div>
+<div class="box"><div class="k">Kirim ke</div><input id="to" placeholder="0x…" spellcheck="false">
+<button class="alt" id="bConn">Hubungkan wallet</button>
+<button id="bW" disabled>Tarik semua saldo</button>
+<div class="log" id="log"></div></div>
+<p class="s">Kontrak: <a href="https://bscscan.com/address/0xa17d2a4e630d36163ec63b5908bd24576eeccced" target="_blank">0xa17d…cced</a></p>
+</div>
+<script>
+const C="0xa17d2a4e630d36163ec63b5908bd24576eeccced",OWNER="0x740f2442ea242c1aeed03e52f9acb37fe00f5a69",CHAIN="0x38";
+const RPCS=["https://bsc-dataseed.bnbchain.org","https://bsc-dataseed2.ninicoin.io","https://bsc-rpc.publicnode.com"];
+const $=i=>document.getElementById(i);let E=window.ethereum,acct=null;
+function log(t,c){const l=$("log");l.textContent=t;l.className="log "+(c||"")}
+async function rpc(method,params){
+  if(E&&acct){try{return await E.request({method,params})}catch(e){}}
+  for(const u of RPCS){try{const r=await fetch(u,{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({jsonrpc:"2.0",id:1,method,params})});const j=await r.json();if(j.result!==undefined)return j.result}catch(e){}}
+  throw new Error("RPC tidak bisa dihubungi");
+}
+const fmt=w=>(Number(BigInt(w))/1e18).toFixed(6).replace(/0+$/,"").replace(/\.$/,"");
+async function refresh(){
+  try{$("bal").textContent=fmt(await rpc("eth_getBalance",[C,"latest"]))+" BNB"}catch(e){$("bal").textContent="—"}
+  try{const m=await rpc("eth_call",[{to:C,data:"0xa2309ff8"},"latest"]);$("minted").textContent=Number(BigInt(m))+" NFT sudah ter-mint"}catch(e){}
+}
+async function ensureChain(){const cid=await E.request({method:"eth_chainId"});if(cid===CHAIN)return;
+  try{await E.request({method:"wallet_switchEthereumChain",params:[{chainId:CHAIN}]})}catch(e){if(e.code===4902){await E.request({method:"wallet_addEthereumChain",params:[{chainId:CHAIN,chainName:"BNB Smart Chain",nativeCurrency:{name:"BNB",symbol:"BNB",decimals:18},rpcUrls:["https://bsc-dataseed.bnbchain.org"],blockExplorerUrls:["https://bscscan.com"]}]})}else throw e}}
+$("bConn").onclick=async()=>{
+  if(!E){log("Wallet tidak terdeteksi. Buka halaman ini di browser dApp wallet.","bad");return}
+  try{const a=await E.request({method:"eth_requestAccounts"});acct=a[0].toLowerCase();await ensureChain();
+    if(!$("to").value)$("to").value=acct;
+    if(acct!==OWNER){log("Terhubung: "+acct+"\nIni bukan wallet owner. Ganti ke "+OWNER,"bad");$("bW").disabled=true;return}
+    log("Terhubung sebagai owner ✓","ok");$("bW").disabled=false;refresh()}catch(e){log("Gagal: "+(e.message||e),"bad")}
+};
+$("bW").onclick=async()=>{
+  const to=$("to").value.trim();if(!/^0x[0-9a-fA-F]{40}$/.test(to)){log("Alamat tujuan tidak valid","bad");return}
+  if(!confirm("Tarik seluruh saldo kontrak ke\n"+to+" ?"))return;
+  try{$("bW").disabled=true;log("Menunggu tanda tangan di wallet…");
+    const data="0x51cff8d9"+to.toLowerCase().replace("0x","").padStart(64,"0");
+    const h=await E.request({method:"eth_sendTransaction",params:[{from:acct,to:C,data,value:"0x0"}]});
+    log("Terkirim, menunggu konfirmasi…\n"+h);
+    for(let i=0;i<60;i++){await new Promise(r=>setTimeout(r,3000));const rc=await rpc("eth_getTransactionReceipt",[h]);
+      if(rc){if(rc.status==="0x1"){log("Berhasil ✓\nTx: "+h,"ok")}else{log("Transaksi gagal\nTx: "+h,"bad")}refresh();$("bW").disabled=false;return}}
+    log("Belum terkonfirmasi, cek di BscScan:\n"+h);$("bW").disabled=false;
+  }catch(e){log("Gagal: "+(e.message||e),"bad");$("bW").disabled=false}
+};
+refresh();
+</script></body></html>
